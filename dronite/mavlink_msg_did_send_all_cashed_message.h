@@ -42,8 +42,7 @@ typedef struct __mavlink_did_send_all_cashed_message_t {
 
  * @return length of the message in bytes (excluding serial stream start sign)
  */
-static inline uint16_t mavlink_msg_did_send_all_cashed_message_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-                              )
+static inline uint16_t mavlink_msg_did_send_all_cashed_message_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_DID_SEND_ALL_CASHED_MESSAGE_LEN];
@@ -71,8 +70,7 @@ static inline uint16_t mavlink_msg_did_send_all_cashed_message_pack(uint8_t syst
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_did_send_all_cashed_message_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
-                               mavlink_message_t* msg,
-                                   )
+                               mavlink_message_t* msg)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_DID_SEND_ALL_CASHED_MESSAGE_LEN];
@@ -100,7 +98,7 @@ static inline uint16_t mavlink_msg_did_send_all_cashed_message_pack_chan(uint8_t
  */
 static inline uint16_t mavlink_msg_did_send_all_cashed_message_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_did_send_all_cashed_message_t* did_send_all_cashed_message)
 {
-    return mavlink_msg_did_send_all_cashed_message_pack(system_id, component_id, msg,);
+    return mavlink_msg_did_send_all_cashed_message_pack(system_id, component_id, msg);
 }
 
 /**
@@ -125,7 +123,7 @@ static inline uint16_t mavlink_msg_did_send_all_cashed_message_encode_chan(uint8
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_did_send_all_cashed_message_send(mavlink_channel_t chan,)
+static inline void mavlink_msg_did_send_all_cashed_message_send(mavlink_channel_t chan)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_DID_SEND_ALL_CASHED_MESSAGE_LEN];
@@ -162,7 +160,7 @@ static inline void mavlink_msg_did_send_all_cashed_message_send_struct(mavlink_c
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_did_send_all_cashed_message_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan, )
+static inline void mavlink_msg_did_send_all_cashed_message_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char *buf = (char *)msgbuf;
