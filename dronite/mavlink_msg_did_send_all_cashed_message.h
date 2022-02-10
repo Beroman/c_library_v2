@@ -112,7 +112,7 @@ static inline uint16_t mavlink_msg_did_send_all_cashed_message_encode(uint8_t sy
  */
 static inline uint16_t mavlink_msg_did_send_all_cashed_message_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_did_send_all_cashed_message_t* did_send_all_cashed_message)
 {
-    return mavlink_msg_did_send_all_cashed_message_pack_chan(system_id, component_id, chan, msg,);
+    return mavlink_msg_did_send_all_cashed_message_pack_chan(system_id, component_id, chan, msg);
 }
 
 /**
