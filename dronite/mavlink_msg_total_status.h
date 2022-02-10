@@ -16,9 +16,9 @@ typedef struct __mavlink_total_status_t {
  int32_t current_consumed; /*< [mAh] Consumed charge, -1: autopilot does not provide consumption estimate*/
  int32_t energy_consumed; /*< [hJ] Consumed energy, -1: autopilot does not provide energy consumption estimate*/
  int32_t time_remaining; /*< [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate*/
- uint32_t onboard_control_sensors_present_extended; /*<  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.*/
- uint32_t onboard_control_sensors_enabled_extended; /*<  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.*/
- uint32_t onboard_control_sensors_health_extended; /*<  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.*/
+ uint32_t onboard_control_sensors_present; /*<  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.*/
+ uint32_t onboard_control_sensors_enabled; /*<  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.*/
+ uint32_t onboard_control_sensors_health; /*<  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.*/
  int32_t lat; /*< [degE7] Latitude (WGS84, EGM96 ellipsoid)*/
  int32_t lon; /*< [degE7] Longitude (WGS84, EGM96 ellipsoid)*/
  int32_t alt; /*< [mm] Altitude (MSL). Positive for up. Note that virtually all GPS modules provide the MSL altitude in addition to the WGS84 altitude.*/
@@ -57,8 +57,8 @@ typedef struct __mavlink_total_status_t {
 #define MAVLINK_MSG_ID_13000_LEN 124
 #define MAVLINK_MSG_ID_13000_MIN_LEN 124
 
-#define MAVLINK_MSG_ID_TOTAL_STATUS_CRC 226
-#define MAVLINK_MSG_ID_13000_CRC 226
+#define MAVLINK_MSG_ID_TOTAL_STATUS_CRC 151
+#define MAVLINK_MSG_ID_13000_CRC 151
 
 
 
@@ -81,9 +81,9 @@ typedef struct __mavlink_total_status_t {
          { "battery_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 110, offsetof(mavlink_total_status_t, battery_id) }, \
          { "battery_remaining", NULL, MAVLINK_TYPE_INT8_T, 0, 111, offsetof(mavlink_total_status_t, battery_remaining) }, \
          { "time_remaining", NULL, MAVLINK_TYPE_INT32_T, 0, 44, offsetof(mavlink_total_status_t, time_remaining) }, \
-         { "onboard_control_sensors_present_extended", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 48, offsetof(mavlink_total_status_t, onboard_control_sensors_present_extended) }, \
-         { "onboard_control_sensors_enabled_extended", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 52, offsetof(mavlink_total_status_t, onboard_control_sensors_enabled_extended) }, \
-         { "onboard_control_sensors_health_extended", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 56, offsetof(mavlink_total_status_t, onboard_control_sensors_health_extended) }, \
+         { "onboard_control_sensors_present", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 48, offsetof(mavlink_total_status_t, onboard_control_sensors_present) }, \
+         { "onboard_control_sensors_enabled", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 52, offsetof(mavlink_total_status_t, onboard_control_sensors_enabled) }, \
+         { "onboard_control_sensors_health", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 56, offsetof(mavlink_total_status_t, onboard_control_sensors_health) }, \
          { "load", NULL, MAVLINK_TYPE_UINT16_T, 0, 96, offsetof(mavlink_total_status_t, load) }, \
          { "time_usec", NULL, MAVLINK_TYPE_UINT64_T, 0, 0, offsetof(mavlink_total_status_t, time_usec) }, \
          { "fix_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 112, offsetof(mavlink_total_status_t, fix_type) }, \
@@ -132,9 +132,9 @@ typedef struct __mavlink_total_status_t {
          { "battery_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 110, offsetof(mavlink_total_status_t, battery_id) }, \
          { "battery_remaining", NULL, MAVLINK_TYPE_INT8_T, 0, 111, offsetof(mavlink_total_status_t, battery_remaining) }, \
          { "time_remaining", NULL, MAVLINK_TYPE_INT32_T, 0, 44, offsetof(mavlink_total_status_t, time_remaining) }, \
-         { "onboard_control_sensors_present_extended", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 48, offsetof(mavlink_total_status_t, onboard_control_sensors_present_extended) }, \
-         { "onboard_control_sensors_enabled_extended", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 52, offsetof(mavlink_total_status_t, onboard_control_sensors_enabled_extended) }, \
-         { "onboard_control_sensors_health_extended", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 56, offsetof(mavlink_total_status_t, onboard_control_sensors_health_extended) }, \
+         { "onboard_control_sensors_present", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 48, offsetof(mavlink_total_status_t, onboard_control_sensors_present) }, \
+         { "onboard_control_sensors_enabled", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 52, offsetof(mavlink_total_status_t, onboard_control_sensors_enabled) }, \
+         { "onboard_control_sensors_health", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 56, offsetof(mavlink_total_status_t, onboard_control_sensors_health) }, \
          { "load", NULL, MAVLINK_TYPE_UINT16_T, 0, 96, offsetof(mavlink_total_status_t, load) }, \
          { "time_usec", NULL, MAVLINK_TYPE_UINT64_T, 0, 0, offsetof(mavlink_total_status_t, time_usec) }, \
          { "fix_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 112, offsetof(mavlink_total_status_t, fix_type) }, \
@@ -187,9 +187,9 @@ typedef struct __mavlink_total_status_t {
  * @param battery_id  Battery ID
  * @param battery_remaining [%] Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery.
  * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
- * @param onboard_control_sensors_present_extended  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
- * @param onboard_control_sensors_enabled_extended  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
- * @param onboard_control_sensors_health_extended  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
+ * @param onboard_control_sensors_present  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
+ * @param onboard_control_sensors_enabled  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
+ * @param onboard_control_sensors_health  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
  * @param load [d%] Maximum usage in percent of the mainloop time. Values: [0-1000] - should always be below 1000
  * @param time_usec [us] Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
  * @param fix_type  GPS fix type.
@@ -220,7 +220,7 @@ typedef struct __mavlink_total_status_t {
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-                               uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present_extended, uint32_t onboard_control_sensors_enabled_extended, uint32_t onboard_control_sensors_health_extended, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
+                               uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TOTAL_STATUS_LEN];
@@ -235,9 +235,9 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
     _mav_put_int32_t(buf, 36, current_consumed);
     _mav_put_int32_t(buf, 40, energy_consumed);
     _mav_put_int32_t(buf, 44, time_remaining);
-    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present_extended);
-    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled_extended);
-    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health_extended);
+    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present);
+    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled);
+    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health);
     _mav_put_int32_t(buf, 60, lat);
     _mav_put_int32_t(buf, 64, lon);
     _mav_put_int32_t(buf, 68, alt);
@@ -284,9 +284,9 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
     packet.current_consumed = current_consumed;
     packet.energy_consumed = energy_consumed;
     packet.time_remaining = time_remaining;
-    packet.onboard_control_sensors_present_extended = onboard_control_sensors_present_extended;
-    packet.onboard_control_sensors_enabled_extended = onboard_control_sensors_enabled_extended;
-    packet.onboard_control_sensors_health_extended = onboard_control_sensors_health_extended;
+    packet.onboard_control_sensors_present = onboard_control_sensors_present;
+    packet.onboard_control_sensors_enabled = onboard_control_sensors_enabled;
+    packet.onboard_control_sensors_health = onboard_control_sensors_health;
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
@@ -346,9 +346,9 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
  * @param battery_id  Battery ID
  * @param battery_remaining [%] Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery.
  * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
- * @param onboard_control_sensors_present_extended  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
- * @param onboard_control_sensors_enabled_extended  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
- * @param onboard_control_sensors_health_extended  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
+ * @param onboard_control_sensors_present  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
+ * @param onboard_control_sensors_enabled  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
+ * @param onboard_control_sensors_health  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
  * @param load [d%] Maximum usage in percent of the mainloop time. Values: [0-1000] - should always be below 1000
  * @param time_usec [us] Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
  * @param fix_type  GPS fix type.
@@ -380,7 +380,7 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
  */
 static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
                                mavlink_message_t* msg,
-                                   uint32_t time_boot_ms,float roll,float pitch,float yaw,float rollspeed,float pitchspeed,float yawspeed,int32_t current_consumed,int32_t energy_consumed,uint16_t voltage_battery,int16_t current_battery,uint8_t battery_id,int8_t battery_remaining,int32_t time_remaining,uint32_t onboard_control_sensors_present_extended,uint32_t onboard_control_sensors_enabled_extended,uint32_t onboard_control_sensors_health_extended,uint16_t load,uint64_t time_usec,uint8_t fix_type,int32_t lat,int32_t lon,int32_t alt,uint16_t eph,uint16_t epv,uint16_t vel,uint16_t cog,uint8_t satellites_visible,uint32_t h_acc,uint32_t v_acc,uint32_t vel_acc,uint32_t hdg_acc,uint8_t type,uint8_t autopilot,uint8_t base_mode,uint32_t custom_mode,uint8_t system_status,uint8_t rssi,uint8_t remrssi,uint8_t txbuf,uint8_t noise,uint8_t remnoise,uint16_t rxerrors,uint16_t fixed)
+                                   uint32_t time_boot_ms,float roll,float pitch,float yaw,float rollspeed,float pitchspeed,float yawspeed,int32_t current_consumed,int32_t energy_consumed,uint16_t voltage_battery,int16_t current_battery,uint8_t battery_id,int8_t battery_remaining,int32_t time_remaining,uint32_t onboard_control_sensors_present,uint32_t onboard_control_sensors_enabled,uint32_t onboard_control_sensors_health,uint16_t load,uint64_t time_usec,uint8_t fix_type,int32_t lat,int32_t lon,int32_t alt,uint16_t eph,uint16_t epv,uint16_t vel,uint16_t cog,uint8_t satellites_visible,uint32_t h_acc,uint32_t v_acc,uint32_t vel_acc,uint32_t hdg_acc,uint8_t type,uint8_t autopilot,uint8_t base_mode,uint32_t custom_mode,uint8_t system_status,uint8_t rssi,uint8_t remrssi,uint8_t txbuf,uint8_t noise,uint8_t remnoise,uint16_t rxerrors,uint16_t fixed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TOTAL_STATUS_LEN];
@@ -395,9 +395,9 @@ static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uin
     _mav_put_int32_t(buf, 36, current_consumed);
     _mav_put_int32_t(buf, 40, energy_consumed);
     _mav_put_int32_t(buf, 44, time_remaining);
-    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present_extended);
-    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled_extended);
-    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health_extended);
+    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present);
+    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled);
+    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health);
     _mav_put_int32_t(buf, 60, lat);
     _mav_put_int32_t(buf, 64, lon);
     _mav_put_int32_t(buf, 68, alt);
@@ -444,9 +444,9 @@ static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uin
     packet.current_consumed = current_consumed;
     packet.energy_consumed = energy_consumed;
     packet.time_remaining = time_remaining;
-    packet.onboard_control_sensors_present_extended = onboard_control_sensors_present_extended;
-    packet.onboard_control_sensors_enabled_extended = onboard_control_sensors_enabled_extended;
-    packet.onboard_control_sensors_health_extended = onboard_control_sensors_health_extended;
+    packet.onboard_control_sensors_present = onboard_control_sensors_present;
+    packet.onboard_control_sensors_enabled = onboard_control_sensors_enabled;
+    packet.onboard_control_sensors_health = onboard_control_sensors_health;
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
@@ -496,7 +496,7 @@ static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uin
  */
 static inline uint16_t mavlink_msg_total_status_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_total_status_t* total_status)
 {
-    return mavlink_msg_total_status_pack(system_id, component_id, msg, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present_extended, total_status->onboard_control_sensors_enabled_extended, total_status->onboard_control_sensors_health_extended, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
+    return mavlink_msg_total_status_pack(system_id, component_id, msg, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
 }
 
 /**
@@ -510,7 +510,7 @@ static inline uint16_t mavlink_msg_total_status_encode(uint8_t system_id, uint8_
  */
 static inline uint16_t mavlink_msg_total_status_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_total_status_t* total_status)
 {
-    return mavlink_msg_total_status_pack_chan(system_id, component_id, chan, msg, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present_extended, total_status->onboard_control_sensors_enabled_extended, total_status->onboard_control_sensors_health_extended, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
+    return mavlink_msg_total_status_pack_chan(system_id, component_id, chan, msg, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
 }
 
 /**
@@ -531,9 +531,9 @@ static inline uint16_t mavlink_msg_total_status_encode_chan(uint8_t system_id, u
  * @param battery_id  Battery ID
  * @param battery_remaining [%] Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery.
  * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
- * @param onboard_control_sensors_present_extended  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
- * @param onboard_control_sensors_enabled_extended  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
- * @param onboard_control_sensors_health_extended  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
+ * @param onboard_control_sensors_present  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
+ * @param onboard_control_sensors_enabled  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
+ * @param onboard_control_sensors_health  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
  * @param load [d%] Maximum usage in percent of the mainloop time. Values: [0-1000] - should always be below 1000
  * @param time_usec [us] Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.
  * @param fix_type  GPS fix type.
@@ -564,7 +564,7 @@ static inline uint16_t mavlink_msg_total_status_encode_chan(uint8_t system_id, u
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present_extended, uint32_t onboard_control_sensors_enabled_extended, uint32_t onboard_control_sensors_health_extended, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
+static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TOTAL_STATUS_LEN];
@@ -579,9 +579,9 @@ static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_
     _mav_put_int32_t(buf, 36, current_consumed);
     _mav_put_int32_t(buf, 40, energy_consumed);
     _mav_put_int32_t(buf, 44, time_remaining);
-    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present_extended);
-    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled_extended);
-    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health_extended);
+    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present);
+    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled);
+    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health);
     _mav_put_int32_t(buf, 60, lat);
     _mav_put_int32_t(buf, 64, lon);
     _mav_put_int32_t(buf, 68, alt);
@@ -628,9 +628,9 @@ static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_
     packet.current_consumed = current_consumed;
     packet.energy_consumed = energy_consumed;
     packet.time_remaining = time_remaining;
-    packet.onboard_control_sensors_present_extended = onboard_control_sensors_present_extended;
-    packet.onboard_control_sensors_enabled_extended = onboard_control_sensors_enabled_extended;
-    packet.onboard_control_sensors_health_extended = onboard_control_sensors_health_extended;
+    packet.onboard_control_sensors_present = onboard_control_sensors_present;
+    packet.onboard_control_sensors_enabled = onboard_control_sensors_enabled;
+    packet.onboard_control_sensors_health = onboard_control_sensors_health;
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
@@ -675,7 +675,7 @@ static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_
 static inline void mavlink_msg_total_status_send_struct(mavlink_channel_t chan, const mavlink_total_status_t* total_status)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-    mavlink_msg_total_status_send(chan, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present_extended, total_status->onboard_control_sensors_enabled_extended, total_status->onboard_control_sensors_health_extended, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
+    mavlink_msg_total_status_send(chan, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
 #else
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOTAL_STATUS, (const char *)total_status, MAVLINK_MSG_ID_TOTAL_STATUS_MIN_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_CRC);
 #endif
@@ -689,7 +689,7 @@ static inline void mavlink_msg_total_status_send_struct(mavlink_channel_t chan, 
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present_extended, uint32_t onboard_control_sensors_enabled_extended, uint32_t onboard_control_sensors_health_extended, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
+static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char *buf = (char *)msgbuf;
@@ -704,9 +704,9 @@ static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, 
     _mav_put_int32_t(buf, 36, current_consumed);
     _mav_put_int32_t(buf, 40, energy_consumed);
     _mav_put_int32_t(buf, 44, time_remaining);
-    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present_extended);
-    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled_extended);
-    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health_extended);
+    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present);
+    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled);
+    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health);
     _mav_put_int32_t(buf, 60, lat);
     _mav_put_int32_t(buf, 64, lon);
     _mav_put_int32_t(buf, 68, alt);
@@ -753,9 +753,9 @@ static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, 
     packet->current_consumed = current_consumed;
     packet->energy_consumed = energy_consumed;
     packet->time_remaining = time_remaining;
-    packet->onboard_control_sensors_present_extended = onboard_control_sensors_present_extended;
-    packet->onboard_control_sensors_enabled_extended = onboard_control_sensors_enabled_extended;
-    packet->onboard_control_sensors_health_extended = onboard_control_sensors_health_extended;
+    packet->onboard_control_sensors_present = onboard_control_sensors_present;
+    packet->onboard_control_sensors_enabled = onboard_control_sensors_enabled;
+    packet->onboard_control_sensors_health = onboard_control_sensors_health;
     packet->lat = lat;
     packet->lon = lon;
     packet->alt = alt;
@@ -939,31 +939,31 @@ static inline int32_t mavlink_msg_total_status_get_time_remaining(const mavlink_
 }
 
 /**
- * @brief Get field onboard_control_sensors_present_extended from total_status message
+ * @brief Get field onboard_control_sensors_present from total_status message
  *
  * @return  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
  */
-static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_present_extended(const mavlink_message_t* msg)
+static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_present(const mavlink_message_t* msg)
 {
     return _MAV_RETURN_uint32_t(msg,  48);
 }
 
 /**
- * @brief Get field onboard_control_sensors_enabled_extended from total_status message
+ * @brief Get field onboard_control_sensors_enabled from total_status message
  *
  * @return  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
  */
-static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_enabled_extended(const mavlink_message_t* msg)
+static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_enabled(const mavlink_message_t* msg)
 {
     return _MAV_RETURN_uint32_t(msg,  52);
 }
 
 /**
- * @brief Get field onboard_control_sensors_health_extended from total_status message
+ * @brief Get field onboard_control_sensors_health from total_status message
  *
  * @return  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
  */
-static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_health_extended(const mavlink_message_t* msg)
+static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_health(const mavlink_message_t* msg)
 {
     return _MAV_RETURN_uint32_t(msg,  56);
 }
@@ -1268,9 +1268,9 @@ static inline void mavlink_msg_total_status_decode(const mavlink_message_t* msg,
     total_status->current_consumed = mavlink_msg_total_status_get_current_consumed(msg);
     total_status->energy_consumed = mavlink_msg_total_status_get_energy_consumed(msg);
     total_status->time_remaining = mavlink_msg_total_status_get_time_remaining(msg);
-    total_status->onboard_control_sensors_present_extended = mavlink_msg_total_status_get_onboard_control_sensors_present_extended(msg);
-    total_status->onboard_control_sensors_enabled_extended = mavlink_msg_total_status_get_onboard_control_sensors_enabled_extended(msg);
-    total_status->onboard_control_sensors_health_extended = mavlink_msg_total_status_get_onboard_control_sensors_health_extended(msg);
+    total_status->onboard_control_sensors_present = mavlink_msg_total_status_get_onboard_control_sensors_present(msg);
+    total_status->onboard_control_sensors_enabled = mavlink_msg_total_status_get_onboard_control_sensors_enabled(msg);
+    total_status->onboard_control_sensors_health = mavlink_msg_total_status_get_onboard_control_sensors_health(msg);
     total_status->lat = mavlink_msg_total_status_get_lat(msg);
     total_status->lon = mavlink_msg_total_status_get_lon(msg);
     total_status->alt = mavlink_msg_total_status_get_alt(msg);
