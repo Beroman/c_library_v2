@@ -3,7 +3,7 @@
 
 #define MAVLINK_MSG_ID_TOTAL_STATUS 13000
 
-
+MAVPACKED(
 typedef struct __mavlink_total_status_t {
  uint64_t time_usec; /*< [us] Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.*/
  uint32_t time_boot_ms; /*< [ms] Timestamp (time since system boot).*/
@@ -15,17 +15,12 @@ typedef struct __mavlink_total_status_t {
  float yawspeed; /*< [rad/s] Yaw angular speed*/
  int32_t current_consumed; /*< [mAh] Consumed charge, -1: autopilot does not provide consumption estimate*/
  int32_t energy_consumed; /*< [hJ] Consumed energy, -1: autopilot does not provide energy consumption estimate*/
- int32_t time_remaining; /*< [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate*/
  uint32_t onboard_control_sensors_present; /*<  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.*/
  uint32_t onboard_control_sensors_enabled; /*<  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.*/
  uint32_t onboard_control_sensors_health; /*<  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.*/
  int32_t lat; /*< [degE7] Latitude (WGS84, EGM96 ellipsoid)*/
  int32_t lon; /*< [degE7] Longitude (WGS84, EGM96 ellipsoid)*/
  int32_t alt; /*< [mm] Altitude (MSL). Positive for up. Note that virtually all GPS modules provide the MSL altitude in addition to the WGS84 altitude.*/
- uint32_t h_acc; /*< [mm] Position uncertainty.*/
- uint32_t v_acc; /*< [mm] Altitude uncertainty.*/
- uint32_t vel_acc; /*< [mm] Speed uncertainty.*/
- uint32_t hdg_acc; /*< [degE5] Heading / track uncertainty*/
  uint32_t custom_mode; /*<  A bitfield for use for autopilot-specific flags*/
  uint16_t voltage_battery; /*< [mV] Battery voltage, UINT16_MAX: Voltage not sent by autopilot*/
  int16_t current_battery; /*< [cA] Battery current, -1: Current not sent by autopilot*/
@@ -38,9 +33,11 @@ typedef struct __mavlink_total_status_t {
  uint16_t fixed; /*<  Count of error corrected radio packets (since boot).*/
  uint8_t battery_id; /*<  Battery ID*/
  int8_t battery_remaining; /*< [%] Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery.*/
+ uint8_t battery_function; /*<  Function of the battery*/
+ uint8_t battery_type; /*<  Type (chemistry) of the battery*/
  uint8_t fix_type; /*<  GPS fix type.*/
  uint8_t satellites_visible; /*<  Number of satellites visible. If unknown, set to UINT8_MAX*/
- uint8_t type; /*<  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.*/
+ uint8_t vehicle_type; /*<  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.*/
  uint8_t autopilot; /*<  Autopilot type / class. Use MAV_AUTOPILOT_INVALID for components that are not flight controllers.*/
  uint8_t base_mode; /*<  System mode bitmap.*/
  uint8_t system_status; /*<  System status flag.*/
@@ -50,15 +47,25 @@ typedef struct __mavlink_total_status_t {
  uint8_t txbuf; /*< [%] Remaining free transmitter buffer space.*/
  uint8_t noise; /*<  Local background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], UINT8_MAX: invalid/unknown.*/
  uint8_t remnoise; /*<  Remote background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], UINT8_MAX: invalid/unknown.*/
-} mavlink_total_status_t;
+ int32_t time_remaining; /*< [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate*/
+ uint8_t charge_state; /*<  State for extent of discharge, provided by autopilot for warning or external reactions*/
+ uint8_t battery_mode; /*<  Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode.*/
+ uint32_t fault_bitmask; /*<  Fault/health indications. These should be set when charge_state is MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY (if not, fault reporting is not supported).*/
+ int32_t alt_ellipsoid; /*< [mm] Altitude (above WGS84, EGM96 ellipsoid). Positive for up.*/
+ uint32_t h_acc; /*< [mm] Position uncertainty.*/
+ uint32_t v_acc; /*< [mm] Altitude uncertainty.*/
+ uint32_t vel_acc; /*< [mm] Speed uncertainty.*/
+ uint32_t hdg_acc; /*< [degE5] Heading / track uncertainty*/
+ uint16_t gps_yaw; /*< [cdeg] Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use UINT16_MAX if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.*/
+}) mavlink_total_status_t;
 
-#define MAVLINK_MSG_ID_TOTAL_STATUS_LEN 124
-#define MAVLINK_MSG_ID_TOTAL_STATUS_MIN_LEN 124
-#define MAVLINK_MSG_ID_13000_LEN 124
-#define MAVLINK_MSG_ID_13000_MIN_LEN 124
+#define MAVLINK_MSG_ID_TOTAL_STATUS_LEN 138
+#define MAVLINK_MSG_ID_TOTAL_STATUS_MIN_LEN 106
+#define MAVLINK_MSG_ID_13000_LEN 138
+#define MAVLINK_MSG_ID_13000_MIN_LEN 106
 
-#define MAVLINK_MSG_ID_TOTAL_STATUS_CRC 151
-#define MAVLINK_MSG_ID_13000_CRC 151
+#define MAVLINK_MSG_ID_TOTAL_STATUS_CRC 99
+#define MAVLINK_MSG_ID_13000_CRC 99
 
 
 
@@ -66,7 +73,7 @@ typedef struct __mavlink_total_status_t {
 #define MAVLINK_MESSAGE_INFO_TOTAL_STATUS { \
     13000, \
     "TOTAL_STATUS", \
-    45, \
+    52, \
     {  { "time_boot_ms", NULL, MAVLINK_TYPE_UINT32_T, 0, 8, offsetof(mavlink_total_status_t, time_boot_ms) }, \
          { "roll", NULL, MAVLINK_TYPE_FLOAT, 0, 12, offsetof(mavlink_total_status_t, roll) }, \
          { "pitch", NULL, MAVLINK_TYPE_FLOAT, 0, 16, offsetof(mavlink_total_status_t, pitch) }, \
@@ -76,48 +83,55 @@ typedef struct __mavlink_total_status_t {
          { "yawspeed", NULL, MAVLINK_TYPE_FLOAT, 0, 32, offsetof(mavlink_total_status_t, yawspeed) }, \
          { "current_consumed", NULL, MAVLINK_TYPE_INT32_T, 0, 36, offsetof(mavlink_total_status_t, current_consumed) }, \
          { "energy_consumed", NULL, MAVLINK_TYPE_INT32_T, 0, 40, offsetof(mavlink_total_status_t, energy_consumed) }, \
-         { "voltage_battery", NULL, MAVLINK_TYPE_UINT16_T, 0, 92, offsetof(mavlink_total_status_t, voltage_battery) }, \
-         { "current_battery", NULL, MAVLINK_TYPE_INT16_T, 0, 94, offsetof(mavlink_total_status_t, current_battery) }, \
-         { "battery_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 110, offsetof(mavlink_total_status_t, battery_id) }, \
-         { "battery_remaining", NULL, MAVLINK_TYPE_INT8_T, 0, 111, offsetof(mavlink_total_status_t, battery_remaining) }, \
-         { "time_remaining", NULL, MAVLINK_TYPE_INT32_T, 0, 44, offsetof(mavlink_total_status_t, time_remaining) }, \
-         { "onboard_control_sensors_present", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 48, offsetof(mavlink_total_status_t, onboard_control_sensors_present) }, \
-         { "onboard_control_sensors_enabled", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 52, offsetof(mavlink_total_status_t, onboard_control_sensors_enabled) }, \
-         { "onboard_control_sensors_health", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 56, offsetof(mavlink_total_status_t, onboard_control_sensors_health) }, \
-         { "load", NULL, MAVLINK_TYPE_UINT16_T, 0, 96, offsetof(mavlink_total_status_t, load) }, \
+         { "voltage_battery", NULL, MAVLINK_TYPE_UINT16_T, 0, 72, offsetof(mavlink_total_status_t, voltage_battery) }, \
+         { "current_battery", NULL, MAVLINK_TYPE_INT16_T, 0, 74, offsetof(mavlink_total_status_t, current_battery) }, \
+         { "battery_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 90, offsetof(mavlink_total_status_t, battery_id) }, \
+         { "battery_remaining", NULL, MAVLINK_TYPE_INT8_T, 0, 91, offsetof(mavlink_total_status_t, battery_remaining) }, \
+         { "battery_function", NULL, MAVLINK_TYPE_UINT8_T, 0, 92, offsetof(mavlink_total_status_t, battery_function) }, \
+         { "battery_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 93, offsetof(mavlink_total_status_t, battery_type) }, \
+         { "onboard_control_sensors_present", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 44, offsetof(mavlink_total_status_t, onboard_control_sensors_present) }, \
+         { "onboard_control_sensors_enabled", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 48, offsetof(mavlink_total_status_t, onboard_control_sensors_enabled) }, \
+         { "onboard_control_sensors_health", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 52, offsetof(mavlink_total_status_t, onboard_control_sensors_health) }, \
+         { "load", NULL, MAVLINK_TYPE_UINT16_T, 0, 76, offsetof(mavlink_total_status_t, load) }, \
          { "time_usec", NULL, MAVLINK_TYPE_UINT64_T, 0, 0, offsetof(mavlink_total_status_t, time_usec) }, \
-         { "fix_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 112, offsetof(mavlink_total_status_t, fix_type) }, \
-         { "lat", NULL, MAVLINK_TYPE_INT32_T, 0, 60, offsetof(mavlink_total_status_t, lat) }, \
-         { "lon", NULL, MAVLINK_TYPE_INT32_T, 0, 64, offsetof(mavlink_total_status_t, lon) }, \
-         { "alt", NULL, MAVLINK_TYPE_INT32_T, 0, 68, offsetof(mavlink_total_status_t, alt) }, \
-         { "eph", NULL, MAVLINK_TYPE_UINT16_T, 0, 98, offsetof(mavlink_total_status_t, eph) }, \
-         { "epv", NULL, MAVLINK_TYPE_UINT16_T, 0, 100, offsetof(mavlink_total_status_t, epv) }, \
-         { "vel", NULL, MAVLINK_TYPE_UINT16_T, 0, 102, offsetof(mavlink_total_status_t, vel) }, \
-         { "cog", NULL, MAVLINK_TYPE_UINT16_T, 0, 104, offsetof(mavlink_total_status_t, cog) }, \
-         { "satellites_visible", NULL, MAVLINK_TYPE_UINT8_T, 0, 113, offsetof(mavlink_total_status_t, satellites_visible) }, \
-         { "h_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 72, offsetof(mavlink_total_status_t, h_acc) }, \
-         { "v_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 76, offsetof(mavlink_total_status_t, v_acc) }, \
-         { "vel_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 80, offsetof(mavlink_total_status_t, vel_acc) }, \
-         { "hdg_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 84, offsetof(mavlink_total_status_t, hdg_acc) }, \
-         { "type", NULL, MAVLINK_TYPE_UINT8_T, 0, 114, offsetof(mavlink_total_status_t, type) }, \
-         { "autopilot", NULL, MAVLINK_TYPE_UINT8_T, 0, 115, offsetof(mavlink_total_status_t, autopilot) }, \
-         { "base_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 116, offsetof(mavlink_total_status_t, base_mode) }, \
-         { "custom_mode", NULL, MAVLINK_TYPE_UINT32_T, 0, 88, offsetof(mavlink_total_status_t, custom_mode) }, \
-         { "system_status", NULL, MAVLINK_TYPE_UINT8_T, 0, 117, offsetof(mavlink_total_status_t, system_status) }, \
-         { "mavlink_version", NULL, MAVLINK_TYPE_UINT8_T, 0, 118, offsetof(mavlink_total_status_t, mavlink_version) }, \
-         { "rssi", NULL, MAVLINK_TYPE_UINT8_T, 0, 119, offsetof(mavlink_total_status_t, rssi) }, \
-         { "remrssi", NULL, MAVLINK_TYPE_UINT8_T, 0, 120, offsetof(mavlink_total_status_t, remrssi) }, \
-         { "txbuf", NULL, MAVLINK_TYPE_UINT8_T, 0, 121, offsetof(mavlink_total_status_t, txbuf) }, \
-         { "noise", NULL, MAVLINK_TYPE_UINT8_T, 0, 122, offsetof(mavlink_total_status_t, noise) }, \
-         { "remnoise", NULL, MAVLINK_TYPE_UINT8_T, 0, 123, offsetof(mavlink_total_status_t, remnoise) }, \
-         { "rxerrors", NULL, MAVLINK_TYPE_UINT16_T, 0, 106, offsetof(mavlink_total_status_t, rxerrors) }, \
-         { "fixed", NULL, MAVLINK_TYPE_UINT16_T, 0, 108, offsetof(mavlink_total_status_t, fixed) }, \
+         { "fix_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 94, offsetof(mavlink_total_status_t, fix_type) }, \
+         { "lat", NULL, MAVLINK_TYPE_INT32_T, 0, 56, offsetof(mavlink_total_status_t, lat) }, \
+         { "lon", NULL, MAVLINK_TYPE_INT32_T, 0, 60, offsetof(mavlink_total_status_t, lon) }, \
+         { "alt", NULL, MAVLINK_TYPE_INT32_T, 0, 64, offsetof(mavlink_total_status_t, alt) }, \
+         { "eph", NULL, MAVLINK_TYPE_UINT16_T, 0, 78, offsetof(mavlink_total_status_t, eph) }, \
+         { "epv", NULL, MAVLINK_TYPE_UINT16_T, 0, 80, offsetof(mavlink_total_status_t, epv) }, \
+         { "vel", NULL, MAVLINK_TYPE_UINT16_T, 0, 82, offsetof(mavlink_total_status_t, vel) }, \
+         { "cog", NULL, MAVLINK_TYPE_UINT16_T, 0, 84, offsetof(mavlink_total_status_t, cog) }, \
+         { "satellites_visible", NULL, MAVLINK_TYPE_UINT8_T, 0, 95, offsetof(mavlink_total_status_t, satellites_visible) }, \
+         { "vehicle_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 96, offsetof(mavlink_total_status_t, vehicle_type) }, \
+         { "autopilot", NULL, MAVLINK_TYPE_UINT8_T, 0, 97, offsetof(mavlink_total_status_t, autopilot) }, \
+         { "base_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 98, offsetof(mavlink_total_status_t, base_mode) }, \
+         { "custom_mode", NULL, MAVLINK_TYPE_UINT32_T, 0, 68, offsetof(mavlink_total_status_t, custom_mode) }, \
+         { "system_status", NULL, MAVLINK_TYPE_UINT8_T, 0, 99, offsetof(mavlink_total_status_t, system_status) }, \
+         { "mavlink_version", NULL, MAVLINK_TYPE_UINT8_T, 0, 100, offsetof(mavlink_total_status_t, mavlink_version) }, \
+         { "rssi", NULL, MAVLINK_TYPE_UINT8_T, 0, 101, offsetof(mavlink_total_status_t, rssi) }, \
+         { "remrssi", NULL, MAVLINK_TYPE_UINT8_T, 0, 102, offsetof(mavlink_total_status_t, remrssi) }, \
+         { "txbuf", NULL, MAVLINK_TYPE_UINT8_T, 0, 103, offsetof(mavlink_total_status_t, txbuf) }, \
+         { "noise", NULL, MAVLINK_TYPE_UINT8_T, 0, 104, offsetof(mavlink_total_status_t, noise) }, \
+         { "remnoise", NULL, MAVLINK_TYPE_UINT8_T, 0, 105, offsetof(mavlink_total_status_t, remnoise) }, \
+         { "rxerrors", NULL, MAVLINK_TYPE_UINT16_T, 0, 86, offsetof(mavlink_total_status_t, rxerrors) }, \
+         { "fixed", NULL, MAVLINK_TYPE_UINT16_T, 0, 88, offsetof(mavlink_total_status_t, fixed) }, \
+         { "time_remaining", NULL, MAVLINK_TYPE_INT32_T, 0, 106, offsetof(mavlink_total_status_t, time_remaining) }, \
+         { "charge_state", NULL, MAVLINK_TYPE_UINT8_T, 0, 110, offsetof(mavlink_total_status_t, charge_state) }, \
+         { "battery_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 111, offsetof(mavlink_total_status_t, battery_mode) }, \
+         { "fault_bitmask", NULL, MAVLINK_TYPE_UINT32_T, 0, 112, offsetof(mavlink_total_status_t, fault_bitmask) }, \
+         { "alt_ellipsoid", NULL, MAVLINK_TYPE_INT32_T, 0, 116, offsetof(mavlink_total_status_t, alt_ellipsoid) }, \
+         { "h_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 120, offsetof(mavlink_total_status_t, h_acc) }, \
+         { "v_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 124, offsetof(mavlink_total_status_t, v_acc) }, \
+         { "vel_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 128, offsetof(mavlink_total_status_t, vel_acc) }, \
+         { "hdg_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 132, offsetof(mavlink_total_status_t, hdg_acc) }, \
+         { "gps_yaw", NULL, MAVLINK_TYPE_UINT16_T, 0, 136, offsetof(mavlink_total_status_t, gps_yaw) }, \
          } \
 }
 #else
 #define MAVLINK_MESSAGE_INFO_TOTAL_STATUS { \
     "TOTAL_STATUS", \
-    45, \
+    52, \
     {  { "time_boot_ms", NULL, MAVLINK_TYPE_UINT32_T, 0, 8, offsetof(mavlink_total_status_t, time_boot_ms) }, \
          { "roll", NULL, MAVLINK_TYPE_FLOAT, 0, 12, offsetof(mavlink_total_status_t, roll) }, \
          { "pitch", NULL, MAVLINK_TYPE_FLOAT, 0, 16, offsetof(mavlink_total_status_t, pitch) }, \
@@ -127,42 +141,49 @@ typedef struct __mavlink_total_status_t {
          { "yawspeed", NULL, MAVLINK_TYPE_FLOAT, 0, 32, offsetof(mavlink_total_status_t, yawspeed) }, \
          { "current_consumed", NULL, MAVLINK_TYPE_INT32_T, 0, 36, offsetof(mavlink_total_status_t, current_consumed) }, \
          { "energy_consumed", NULL, MAVLINK_TYPE_INT32_T, 0, 40, offsetof(mavlink_total_status_t, energy_consumed) }, \
-         { "voltage_battery", NULL, MAVLINK_TYPE_UINT16_T, 0, 92, offsetof(mavlink_total_status_t, voltage_battery) }, \
-         { "current_battery", NULL, MAVLINK_TYPE_INT16_T, 0, 94, offsetof(mavlink_total_status_t, current_battery) }, \
-         { "battery_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 110, offsetof(mavlink_total_status_t, battery_id) }, \
-         { "battery_remaining", NULL, MAVLINK_TYPE_INT8_T, 0, 111, offsetof(mavlink_total_status_t, battery_remaining) }, \
-         { "time_remaining", NULL, MAVLINK_TYPE_INT32_T, 0, 44, offsetof(mavlink_total_status_t, time_remaining) }, \
-         { "onboard_control_sensors_present", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 48, offsetof(mavlink_total_status_t, onboard_control_sensors_present) }, \
-         { "onboard_control_sensors_enabled", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 52, offsetof(mavlink_total_status_t, onboard_control_sensors_enabled) }, \
-         { "onboard_control_sensors_health", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 56, offsetof(mavlink_total_status_t, onboard_control_sensors_health) }, \
-         { "load", NULL, MAVLINK_TYPE_UINT16_T, 0, 96, offsetof(mavlink_total_status_t, load) }, \
+         { "voltage_battery", NULL, MAVLINK_TYPE_UINT16_T, 0, 72, offsetof(mavlink_total_status_t, voltage_battery) }, \
+         { "current_battery", NULL, MAVLINK_TYPE_INT16_T, 0, 74, offsetof(mavlink_total_status_t, current_battery) }, \
+         { "battery_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 90, offsetof(mavlink_total_status_t, battery_id) }, \
+         { "battery_remaining", NULL, MAVLINK_TYPE_INT8_T, 0, 91, offsetof(mavlink_total_status_t, battery_remaining) }, \
+         { "battery_function", NULL, MAVLINK_TYPE_UINT8_T, 0, 92, offsetof(mavlink_total_status_t, battery_function) }, \
+         { "battery_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 93, offsetof(mavlink_total_status_t, battery_type) }, \
+         { "onboard_control_sensors_present", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 44, offsetof(mavlink_total_status_t, onboard_control_sensors_present) }, \
+         { "onboard_control_sensors_enabled", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 48, offsetof(mavlink_total_status_t, onboard_control_sensors_enabled) }, \
+         { "onboard_control_sensors_health", "0x%04x", MAVLINK_TYPE_UINT32_T, 0, 52, offsetof(mavlink_total_status_t, onboard_control_sensors_health) }, \
+         { "load", NULL, MAVLINK_TYPE_UINT16_T, 0, 76, offsetof(mavlink_total_status_t, load) }, \
          { "time_usec", NULL, MAVLINK_TYPE_UINT64_T, 0, 0, offsetof(mavlink_total_status_t, time_usec) }, \
-         { "fix_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 112, offsetof(mavlink_total_status_t, fix_type) }, \
-         { "lat", NULL, MAVLINK_TYPE_INT32_T, 0, 60, offsetof(mavlink_total_status_t, lat) }, \
-         { "lon", NULL, MAVLINK_TYPE_INT32_T, 0, 64, offsetof(mavlink_total_status_t, lon) }, \
-         { "alt", NULL, MAVLINK_TYPE_INT32_T, 0, 68, offsetof(mavlink_total_status_t, alt) }, \
-         { "eph", NULL, MAVLINK_TYPE_UINT16_T, 0, 98, offsetof(mavlink_total_status_t, eph) }, \
-         { "epv", NULL, MAVLINK_TYPE_UINT16_T, 0, 100, offsetof(mavlink_total_status_t, epv) }, \
-         { "vel", NULL, MAVLINK_TYPE_UINT16_T, 0, 102, offsetof(mavlink_total_status_t, vel) }, \
-         { "cog", NULL, MAVLINK_TYPE_UINT16_T, 0, 104, offsetof(mavlink_total_status_t, cog) }, \
-         { "satellites_visible", NULL, MAVLINK_TYPE_UINT8_T, 0, 113, offsetof(mavlink_total_status_t, satellites_visible) }, \
-         { "h_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 72, offsetof(mavlink_total_status_t, h_acc) }, \
-         { "v_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 76, offsetof(mavlink_total_status_t, v_acc) }, \
-         { "vel_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 80, offsetof(mavlink_total_status_t, vel_acc) }, \
-         { "hdg_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 84, offsetof(mavlink_total_status_t, hdg_acc) }, \
-         { "type", NULL, MAVLINK_TYPE_UINT8_T, 0, 114, offsetof(mavlink_total_status_t, type) }, \
-         { "autopilot", NULL, MAVLINK_TYPE_UINT8_T, 0, 115, offsetof(mavlink_total_status_t, autopilot) }, \
-         { "base_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 116, offsetof(mavlink_total_status_t, base_mode) }, \
-         { "custom_mode", NULL, MAVLINK_TYPE_UINT32_T, 0, 88, offsetof(mavlink_total_status_t, custom_mode) }, \
-         { "system_status", NULL, MAVLINK_TYPE_UINT8_T, 0, 117, offsetof(mavlink_total_status_t, system_status) }, \
-         { "mavlink_version", NULL, MAVLINK_TYPE_UINT8_T, 0, 118, offsetof(mavlink_total_status_t, mavlink_version) }, \
-         { "rssi", NULL, MAVLINK_TYPE_UINT8_T, 0, 119, offsetof(mavlink_total_status_t, rssi) }, \
-         { "remrssi", NULL, MAVLINK_TYPE_UINT8_T, 0, 120, offsetof(mavlink_total_status_t, remrssi) }, \
-         { "txbuf", NULL, MAVLINK_TYPE_UINT8_T, 0, 121, offsetof(mavlink_total_status_t, txbuf) }, \
-         { "noise", NULL, MAVLINK_TYPE_UINT8_T, 0, 122, offsetof(mavlink_total_status_t, noise) }, \
-         { "remnoise", NULL, MAVLINK_TYPE_UINT8_T, 0, 123, offsetof(mavlink_total_status_t, remnoise) }, \
-         { "rxerrors", NULL, MAVLINK_TYPE_UINT16_T, 0, 106, offsetof(mavlink_total_status_t, rxerrors) }, \
-         { "fixed", NULL, MAVLINK_TYPE_UINT16_T, 0, 108, offsetof(mavlink_total_status_t, fixed) }, \
+         { "fix_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 94, offsetof(mavlink_total_status_t, fix_type) }, \
+         { "lat", NULL, MAVLINK_TYPE_INT32_T, 0, 56, offsetof(mavlink_total_status_t, lat) }, \
+         { "lon", NULL, MAVLINK_TYPE_INT32_T, 0, 60, offsetof(mavlink_total_status_t, lon) }, \
+         { "alt", NULL, MAVLINK_TYPE_INT32_T, 0, 64, offsetof(mavlink_total_status_t, alt) }, \
+         { "eph", NULL, MAVLINK_TYPE_UINT16_T, 0, 78, offsetof(mavlink_total_status_t, eph) }, \
+         { "epv", NULL, MAVLINK_TYPE_UINT16_T, 0, 80, offsetof(mavlink_total_status_t, epv) }, \
+         { "vel", NULL, MAVLINK_TYPE_UINT16_T, 0, 82, offsetof(mavlink_total_status_t, vel) }, \
+         { "cog", NULL, MAVLINK_TYPE_UINT16_T, 0, 84, offsetof(mavlink_total_status_t, cog) }, \
+         { "satellites_visible", NULL, MAVLINK_TYPE_UINT8_T, 0, 95, offsetof(mavlink_total_status_t, satellites_visible) }, \
+         { "vehicle_type", NULL, MAVLINK_TYPE_UINT8_T, 0, 96, offsetof(mavlink_total_status_t, vehicle_type) }, \
+         { "autopilot", NULL, MAVLINK_TYPE_UINT8_T, 0, 97, offsetof(mavlink_total_status_t, autopilot) }, \
+         { "base_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 98, offsetof(mavlink_total_status_t, base_mode) }, \
+         { "custom_mode", NULL, MAVLINK_TYPE_UINT32_T, 0, 68, offsetof(mavlink_total_status_t, custom_mode) }, \
+         { "system_status", NULL, MAVLINK_TYPE_UINT8_T, 0, 99, offsetof(mavlink_total_status_t, system_status) }, \
+         { "mavlink_version", NULL, MAVLINK_TYPE_UINT8_T, 0, 100, offsetof(mavlink_total_status_t, mavlink_version) }, \
+         { "rssi", NULL, MAVLINK_TYPE_UINT8_T, 0, 101, offsetof(mavlink_total_status_t, rssi) }, \
+         { "remrssi", NULL, MAVLINK_TYPE_UINT8_T, 0, 102, offsetof(mavlink_total_status_t, remrssi) }, \
+         { "txbuf", NULL, MAVLINK_TYPE_UINT8_T, 0, 103, offsetof(mavlink_total_status_t, txbuf) }, \
+         { "noise", NULL, MAVLINK_TYPE_UINT8_T, 0, 104, offsetof(mavlink_total_status_t, noise) }, \
+         { "remnoise", NULL, MAVLINK_TYPE_UINT8_T, 0, 105, offsetof(mavlink_total_status_t, remnoise) }, \
+         { "rxerrors", NULL, MAVLINK_TYPE_UINT16_T, 0, 86, offsetof(mavlink_total_status_t, rxerrors) }, \
+         { "fixed", NULL, MAVLINK_TYPE_UINT16_T, 0, 88, offsetof(mavlink_total_status_t, fixed) }, \
+         { "time_remaining", NULL, MAVLINK_TYPE_INT32_T, 0, 106, offsetof(mavlink_total_status_t, time_remaining) }, \
+         { "charge_state", NULL, MAVLINK_TYPE_UINT8_T, 0, 110, offsetof(mavlink_total_status_t, charge_state) }, \
+         { "battery_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 111, offsetof(mavlink_total_status_t, battery_mode) }, \
+         { "fault_bitmask", NULL, MAVLINK_TYPE_UINT32_T, 0, 112, offsetof(mavlink_total_status_t, fault_bitmask) }, \
+         { "alt_ellipsoid", NULL, MAVLINK_TYPE_INT32_T, 0, 116, offsetof(mavlink_total_status_t, alt_ellipsoid) }, \
+         { "h_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 120, offsetof(mavlink_total_status_t, h_acc) }, \
+         { "v_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 124, offsetof(mavlink_total_status_t, v_acc) }, \
+         { "vel_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 128, offsetof(mavlink_total_status_t, vel_acc) }, \
+         { "hdg_acc", NULL, MAVLINK_TYPE_UINT32_T, 0, 132, offsetof(mavlink_total_status_t, hdg_acc) }, \
+         { "gps_yaw", NULL, MAVLINK_TYPE_UINT16_T, 0, 136, offsetof(mavlink_total_status_t, gps_yaw) }, \
          } \
 }
 #endif
@@ -186,7 +207,8 @@ typedef struct __mavlink_total_status_t {
  * @param current_battery [cA] Battery current, -1: Current not sent by autopilot
  * @param battery_id  Battery ID
  * @param battery_remaining [%] Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery.
- * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
+ * @param battery_function  Function of the battery
+ * @param battery_type  Type (chemistry) of the battery
  * @param onboard_control_sensors_present  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
  * @param onboard_control_sensors_enabled  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
  * @param onboard_control_sensors_health  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
@@ -201,11 +223,7 @@ typedef struct __mavlink_total_status_t {
  * @param vel [cm/s] GPS ground speed. If unknown, set to: UINT16_MAX
  * @param cog [cdeg] Course over ground (NOT heading, but direction of movement) in degrees * 100, 0.0..359.99 degrees. If unknown, set to: UINT16_MAX
  * @param satellites_visible  Number of satellites visible. If unknown, set to UINT8_MAX
- * @param h_acc [mm] Position uncertainty.
- * @param v_acc [mm] Altitude uncertainty.
- * @param vel_acc [mm] Speed uncertainty.
- * @param hdg_acc [degE5] Heading / track uncertainty
- * @param type  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.
+ * @param vehicle_type  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.
  * @param autopilot  Autopilot type / class. Use MAV_AUTOPILOT_INVALID for components that are not flight controllers.
  * @param base_mode  System mode bitmap.
  * @param custom_mode  A bitfield for use for autopilot-specific flags
@@ -217,10 +235,20 @@ typedef struct __mavlink_total_status_t {
  * @param remnoise  Remote background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], UINT8_MAX: invalid/unknown.
  * @param rxerrors  Count of radio packet receive errors (since boot).
  * @param fixed  Count of error corrected radio packets (since boot).
+ * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
+ * @param charge_state  State for extent of discharge, provided by autopilot for warning or external reactions
+ * @param battery_mode  Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode.
+ * @param fault_bitmask  Fault/health indications. These should be set when charge_state is MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY (if not, fault reporting is not supported).
+ * @param alt_ellipsoid [mm] Altitude (above WGS84, EGM96 ellipsoid). Positive for up.
+ * @param h_acc [mm] Position uncertainty.
+ * @param v_acc [mm] Altitude uncertainty.
+ * @param vel_acc [mm] Speed uncertainty.
+ * @param hdg_acc [degE5] Heading / track uncertainty
+ * @param gps_yaw [cdeg] Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use UINT16_MAX if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-                               uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
+                               uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, uint8_t battery_function, uint8_t battery_type, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint8_t vehicle_type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed, int32_t time_remaining, uint8_t charge_state, uint8_t battery_mode, uint32_t fault_bitmask, int32_t alt_ellipsoid, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint16_t gps_yaw)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TOTAL_STATUS_LEN];
@@ -234,41 +262,48 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
     _mav_put_float(buf, 32, yawspeed);
     _mav_put_int32_t(buf, 36, current_consumed);
     _mav_put_int32_t(buf, 40, energy_consumed);
-    _mav_put_int32_t(buf, 44, time_remaining);
-    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present);
-    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled);
-    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health);
-    _mav_put_int32_t(buf, 60, lat);
-    _mav_put_int32_t(buf, 64, lon);
-    _mav_put_int32_t(buf, 68, alt);
-    _mav_put_uint32_t(buf, 72, h_acc);
-    _mav_put_uint32_t(buf, 76, v_acc);
-    _mav_put_uint32_t(buf, 80, vel_acc);
-    _mav_put_uint32_t(buf, 84, hdg_acc);
-    _mav_put_uint32_t(buf, 88, custom_mode);
-    _mav_put_uint16_t(buf, 92, voltage_battery);
-    _mav_put_int16_t(buf, 94, current_battery);
-    _mav_put_uint16_t(buf, 96, load);
-    _mav_put_uint16_t(buf, 98, eph);
-    _mav_put_uint16_t(buf, 100, epv);
-    _mav_put_uint16_t(buf, 102, vel);
-    _mav_put_uint16_t(buf, 104, cog);
-    _mav_put_uint16_t(buf, 106, rxerrors);
-    _mav_put_uint16_t(buf, 108, fixed);
-    _mav_put_uint8_t(buf, 110, battery_id);
-    _mav_put_int8_t(buf, 111, battery_remaining);
-    _mav_put_uint8_t(buf, 112, fix_type);
-    _mav_put_uint8_t(buf, 113, satellites_visible);
-    _mav_put_uint8_t(buf, 114, type);
-    _mav_put_uint8_t(buf, 115, autopilot);
-    _mav_put_uint8_t(buf, 116, base_mode);
-    _mav_put_uint8_t(buf, 117, system_status);
-    _mav_put_uint8_t(buf, 118, 2);
-    _mav_put_uint8_t(buf, 119, rssi);
-    _mav_put_uint8_t(buf, 120, remrssi);
-    _mav_put_uint8_t(buf, 121, txbuf);
-    _mav_put_uint8_t(buf, 122, noise);
-    _mav_put_uint8_t(buf, 123, remnoise);
+    _mav_put_uint32_t(buf, 44, onboard_control_sensors_present);
+    _mav_put_uint32_t(buf, 48, onboard_control_sensors_enabled);
+    _mav_put_uint32_t(buf, 52, onboard_control_sensors_health);
+    _mav_put_int32_t(buf, 56, lat);
+    _mav_put_int32_t(buf, 60, lon);
+    _mav_put_int32_t(buf, 64, alt);
+    _mav_put_uint32_t(buf, 68, custom_mode);
+    _mav_put_uint16_t(buf, 72, voltage_battery);
+    _mav_put_int16_t(buf, 74, current_battery);
+    _mav_put_uint16_t(buf, 76, load);
+    _mav_put_uint16_t(buf, 78, eph);
+    _mav_put_uint16_t(buf, 80, epv);
+    _mav_put_uint16_t(buf, 82, vel);
+    _mav_put_uint16_t(buf, 84, cog);
+    _mav_put_uint16_t(buf, 86, rxerrors);
+    _mav_put_uint16_t(buf, 88, fixed);
+    _mav_put_uint8_t(buf, 90, battery_id);
+    _mav_put_int8_t(buf, 91, battery_remaining);
+    _mav_put_uint8_t(buf, 92, battery_function);
+    _mav_put_uint8_t(buf, 93, battery_type);
+    _mav_put_uint8_t(buf, 94, fix_type);
+    _mav_put_uint8_t(buf, 95, satellites_visible);
+    _mav_put_uint8_t(buf, 96, vehicle_type);
+    _mav_put_uint8_t(buf, 97, autopilot);
+    _mav_put_uint8_t(buf, 98, base_mode);
+    _mav_put_uint8_t(buf, 99, system_status);
+    _mav_put_uint8_t(buf, 100, 2);
+    _mav_put_uint8_t(buf, 101, rssi);
+    _mav_put_uint8_t(buf, 102, remrssi);
+    _mav_put_uint8_t(buf, 103, txbuf);
+    _mav_put_uint8_t(buf, 104, noise);
+    _mav_put_uint8_t(buf, 105, remnoise);
+    _mav_put_int32_t(buf, 106, time_remaining);
+    _mav_put_uint8_t(buf, 110, charge_state);
+    _mav_put_uint8_t(buf, 111, battery_mode);
+    _mav_put_uint32_t(buf, 112, fault_bitmask);
+    _mav_put_int32_t(buf, 116, alt_ellipsoid);
+    _mav_put_uint32_t(buf, 120, h_acc);
+    _mav_put_uint32_t(buf, 124, v_acc);
+    _mav_put_uint32_t(buf, 128, vel_acc);
+    _mav_put_uint32_t(buf, 132, hdg_acc);
+    _mav_put_uint16_t(buf, 136, gps_yaw);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_TOTAL_STATUS_LEN);
 #else
@@ -283,17 +318,12 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
     packet.yawspeed = yawspeed;
     packet.current_consumed = current_consumed;
     packet.energy_consumed = energy_consumed;
-    packet.time_remaining = time_remaining;
     packet.onboard_control_sensors_present = onboard_control_sensors_present;
     packet.onboard_control_sensors_enabled = onboard_control_sensors_enabled;
     packet.onboard_control_sensors_health = onboard_control_sensors_health;
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
-    packet.h_acc = h_acc;
-    packet.v_acc = v_acc;
-    packet.vel_acc = vel_acc;
-    packet.hdg_acc = hdg_acc;
     packet.custom_mode = custom_mode;
     packet.voltage_battery = voltage_battery;
     packet.current_battery = current_battery;
@@ -306,9 +336,11 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
     packet.fixed = fixed;
     packet.battery_id = battery_id;
     packet.battery_remaining = battery_remaining;
+    packet.battery_function = battery_function;
+    packet.battery_type = battery_type;
     packet.fix_type = fix_type;
     packet.satellites_visible = satellites_visible;
-    packet.type = type;
+    packet.vehicle_type = vehicle_type;
     packet.autopilot = autopilot;
     packet.base_mode = base_mode;
     packet.system_status = system_status;
@@ -318,6 +350,16 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
     packet.txbuf = txbuf;
     packet.noise = noise;
     packet.remnoise = remnoise;
+    packet.time_remaining = time_remaining;
+    packet.charge_state = charge_state;
+    packet.battery_mode = battery_mode;
+    packet.fault_bitmask = fault_bitmask;
+    packet.alt_ellipsoid = alt_ellipsoid;
+    packet.h_acc = h_acc;
+    packet.v_acc = v_acc;
+    packet.vel_acc = vel_acc;
+    packet.hdg_acc = hdg_acc;
+    packet.gps_yaw = gps_yaw;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_TOTAL_STATUS_LEN);
 #endif
@@ -345,7 +387,8 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
  * @param current_battery [cA] Battery current, -1: Current not sent by autopilot
  * @param battery_id  Battery ID
  * @param battery_remaining [%] Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery.
- * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
+ * @param battery_function  Function of the battery
+ * @param battery_type  Type (chemistry) of the battery
  * @param onboard_control_sensors_present  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
  * @param onboard_control_sensors_enabled  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
  * @param onboard_control_sensors_health  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
@@ -360,11 +403,7 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
  * @param vel [cm/s] GPS ground speed. If unknown, set to: UINT16_MAX
  * @param cog [cdeg] Course over ground (NOT heading, but direction of movement) in degrees * 100, 0.0..359.99 degrees. If unknown, set to: UINT16_MAX
  * @param satellites_visible  Number of satellites visible. If unknown, set to UINT8_MAX
- * @param h_acc [mm] Position uncertainty.
- * @param v_acc [mm] Altitude uncertainty.
- * @param vel_acc [mm] Speed uncertainty.
- * @param hdg_acc [degE5] Heading / track uncertainty
- * @param type  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.
+ * @param vehicle_type  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.
  * @param autopilot  Autopilot type / class. Use MAV_AUTOPILOT_INVALID for components that are not flight controllers.
  * @param base_mode  System mode bitmap.
  * @param custom_mode  A bitfield for use for autopilot-specific flags
@@ -376,11 +415,21 @@ static inline uint16_t mavlink_msg_total_status_pack(uint8_t system_id, uint8_t 
  * @param remnoise  Remote background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], UINT8_MAX: invalid/unknown.
  * @param rxerrors  Count of radio packet receive errors (since boot).
  * @param fixed  Count of error corrected radio packets (since boot).
+ * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
+ * @param charge_state  State for extent of discharge, provided by autopilot for warning or external reactions
+ * @param battery_mode  Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode.
+ * @param fault_bitmask  Fault/health indications. These should be set when charge_state is MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY (if not, fault reporting is not supported).
+ * @param alt_ellipsoid [mm] Altitude (above WGS84, EGM96 ellipsoid). Positive for up.
+ * @param h_acc [mm] Position uncertainty.
+ * @param v_acc [mm] Altitude uncertainty.
+ * @param vel_acc [mm] Speed uncertainty.
+ * @param hdg_acc [degE5] Heading / track uncertainty
+ * @param gps_yaw [cdeg] Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use UINT16_MAX if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
                                mavlink_message_t* msg,
-                                   uint32_t time_boot_ms,float roll,float pitch,float yaw,float rollspeed,float pitchspeed,float yawspeed,int32_t current_consumed,int32_t energy_consumed,uint16_t voltage_battery,int16_t current_battery,uint8_t battery_id,int8_t battery_remaining,int32_t time_remaining,uint32_t onboard_control_sensors_present,uint32_t onboard_control_sensors_enabled,uint32_t onboard_control_sensors_health,uint16_t load,uint64_t time_usec,uint8_t fix_type,int32_t lat,int32_t lon,int32_t alt,uint16_t eph,uint16_t epv,uint16_t vel,uint16_t cog,uint8_t satellites_visible,uint32_t h_acc,uint32_t v_acc,uint32_t vel_acc,uint32_t hdg_acc,uint8_t type,uint8_t autopilot,uint8_t base_mode,uint32_t custom_mode,uint8_t system_status,uint8_t rssi,uint8_t remrssi,uint8_t txbuf,uint8_t noise,uint8_t remnoise,uint16_t rxerrors,uint16_t fixed)
+                                   uint32_t time_boot_ms,float roll,float pitch,float yaw,float rollspeed,float pitchspeed,float yawspeed,int32_t current_consumed,int32_t energy_consumed,uint16_t voltage_battery,int16_t current_battery,uint8_t battery_id,int8_t battery_remaining,uint8_t battery_function,uint8_t battery_type,uint32_t onboard_control_sensors_present,uint32_t onboard_control_sensors_enabled,uint32_t onboard_control_sensors_health,uint16_t load,uint64_t time_usec,uint8_t fix_type,int32_t lat,int32_t lon,int32_t alt,uint16_t eph,uint16_t epv,uint16_t vel,uint16_t cog,uint8_t satellites_visible,uint8_t vehicle_type,uint8_t autopilot,uint8_t base_mode,uint32_t custom_mode,uint8_t system_status,uint8_t rssi,uint8_t remrssi,uint8_t txbuf,uint8_t noise,uint8_t remnoise,uint16_t rxerrors,uint16_t fixed,int32_t time_remaining,uint8_t charge_state,uint8_t battery_mode,uint32_t fault_bitmask,int32_t alt_ellipsoid,uint32_t h_acc,uint32_t v_acc,uint32_t vel_acc,uint32_t hdg_acc,uint16_t gps_yaw)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TOTAL_STATUS_LEN];
@@ -394,41 +443,48 @@ static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uin
     _mav_put_float(buf, 32, yawspeed);
     _mav_put_int32_t(buf, 36, current_consumed);
     _mav_put_int32_t(buf, 40, energy_consumed);
-    _mav_put_int32_t(buf, 44, time_remaining);
-    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present);
-    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled);
-    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health);
-    _mav_put_int32_t(buf, 60, lat);
-    _mav_put_int32_t(buf, 64, lon);
-    _mav_put_int32_t(buf, 68, alt);
-    _mav_put_uint32_t(buf, 72, h_acc);
-    _mav_put_uint32_t(buf, 76, v_acc);
-    _mav_put_uint32_t(buf, 80, vel_acc);
-    _mav_put_uint32_t(buf, 84, hdg_acc);
-    _mav_put_uint32_t(buf, 88, custom_mode);
-    _mav_put_uint16_t(buf, 92, voltage_battery);
-    _mav_put_int16_t(buf, 94, current_battery);
-    _mav_put_uint16_t(buf, 96, load);
-    _mav_put_uint16_t(buf, 98, eph);
-    _mav_put_uint16_t(buf, 100, epv);
-    _mav_put_uint16_t(buf, 102, vel);
-    _mav_put_uint16_t(buf, 104, cog);
-    _mav_put_uint16_t(buf, 106, rxerrors);
-    _mav_put_uint16_t(buf, 108, fixed);
-    _mav_put_uint8_t(buf, 110, battery_id);
-    _mav_put_int8_t(buf, 111, battery_remaining);
-    _mav_put_uint8_t(buf, 112, fix_type);
-    _mav_put_uint8_t(buf, 113, satellites_visible);
-    _mav_put_uint8_t(buf, 114, type);
-    _mav_put_uint8_t(buf, 115, autopilot);
-    _mav_put_uint8_t(buf, 116, base_mode);
-    _mav_put_uint8_t(buf, 117, system_status);
-    _mav_put_uint8_t(buf, 118, 2);
-    _mav_put_uint8_t(buf, 119, rssi);
-    _mav_put_uint8_t(buf, 120, remrssi);
-    _mav_put_uint8_t(buf, 121, txbuf);
-    _mav_put_uint8_t(buf, 122, noise);
-    _mav_put_uint8_t(buf, 123, remnoise);
+    _mav_put_uint32_t(buf, 44, onboard_control_sensors_present);
+    _mav_put_uint32_t(buf, 48, onboard_control_sensors_enabled);
+    _mav_put_uint32_t(buf, 52, onboard_control_sensors_health);
+    _mav_put_int32_t(buf, 56, lat);
+    _mav_put_int32_t(buf, 60, lon);
+    _mav_put_int32_t(buf, 64, alt);
+    _mav_put_uint32_t(buf, 68, custom_mode);
+    _mav_put_uint16_t(buf, 72, voltage_battery);
+    _mav_put_int16_t(buf, 74, current_battery);
+    _mav_put_uint16_t(buf, 76, load);
+    _mav_put_uint16_t(buf, 78, eph);
+    _mav_put_uint16_t(buf, 80, epv);
+    _mav_put_uint16_t(buf, 82, vel);
+    _mav_put_uint16_t(buf, 84, cog);
+    _mav_put_uint16_t(buf, 86, rxerrors);
+    _mav_put_uint16_t(buf, 88, fixed);
+    _mav_put_uint8_t(buf, 90, battery_id);
+    _mav_put_int8_t(buf, 91, battery_remaining);
+    _mav_put_uint8_t(buf, 92, battery_function);
+    _mav_put_uint8_t(buf, 93, battery_type);
+    _mav_put_uint8_t(buf, 94, fix_type);
+    _mav_put_uint8_t(buf, 95, satellites_visible);
+    _mav_put_uint8_t(buf, 96, vehicle_type);
+    _mav_put_uint8_t(buf, 97, autopilot);
+    _mav_put_uint8_t(buf, 98, base_mode);
+    _mav_put_uint8_t(buf, 99, system_status);
+    _mav_put_uint8_t(buf, 100, 2);
+    _mav_put_uint8_t(buf, 101, rssi);
+    _mav_put_uint8_t(buf, 102, remrssi);
+    _mav_put_uint8_t(buf, 103, txbuf);
+    _mav_put_uint8_t(buf, 104, noise);
+    _mav_put_uint8_t(buf, 105, remnoise);
+    _mav_put_int32_t(buf, 106, time_remaining);
+    _mav_put_uint8_t(buf, 110, charge_state);
+    _mav_put_uint8_t(buf, 111, battery_mode);
+    _mav_put_uint32_t(buf, 112, fault_bitmask);
+    _mav_put_int32_t(buf, 116, alt_ellipsoid);
+    _mav_put_uint32_t(buf, 120, h_acc);
+    _mav_put_uint32_t(buf, 124, v_acc);
+    _mav_put_uint32_t(buf, 128, vel_acc);
+    _mav_put_uint32_t(buf, 132, hdg_acc);
+    _mav_put_uint16_t(buf, 136, gps_yaw);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_TOTAL_STATUS_LEN);
 #else
@@ -443,17 +499,12 @@ static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uin
     packet.yawspeed = yawspeed;
     packet.current_consumed = current_consumed;
     packet.energy_consumed = energy_consumed;
-    packet.time_remaining = time_remaining;
     packet.onboard_control_sensors_present = onboard_control_sensors_present;
     packet.onboard_control_sensors_enabled = onboard_control_sensors_enabled;
     packet.onboard_control_sensors_health = onboard_control_sensors_health;
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
-    packet.h_acc = h_acc;
-    packet.v_acc = v_acc;
-    packet.vel_acc = vel_acc;
-    packet.hdg_acc = hdg_acc;
     packet.custom_mode = custom_mode;
     packet.voltage_battery = voltage_battery;
     packet.current_battery = current_battery;
@@ -466,9 +517,11 @@ static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uin
     packet.fixed = fixed;
     packet.battery_id = battery_id;
     packet.battery_remaining = battery_remaining;
+    packet.battery_function = battery_function;
+    packet.battery_type = battery_type;
     packet.fix_type = fix_type;
     packet.satellites_visible = satellites_visible;
-    packet.type = type;
+    packet.vehicle_type = vehicle_type;
     packet.autopilot = autopilot;
     packet.base_mode = base_mode;
     packet.system_status = system_status;
@@ -478,6 +531,16 @@ static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uin
     packet.txbuf = txbuf;
     packet.noise = noise;
     packet.remnoise = remnoise;
+    packet.time_remaining = time_remaining;
+    packet.charge_state = charge_state;
+    packet.battery_mode = battery_mode;
+    packet.fault_bitmask = fault_bitmask;
+    packet.alt_ellipsoid = alt_ellipsoid;
+    packet.h_acc = h_acc;
+    packet.v_acc = v_acc;
+    packet.vel_acc = vel_acc;
+    packet.hdg_acc = hdg_acc;
+    packet.gps_yaw = gps_yaw;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_TOTAL_STATUS_LEN);
 #endif
@@ -496,7 +559,7 @@ static inline uint16_t mavlink_msg_total_status_pack_chan(uint8_t system_id, uin
  */
 static inline uint16_t mavlink_msg_total_status_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_total_status_t* total_status)
 {
-    return mavlink_msg_total_status_pack(system_id, component_id, msg, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
+    return mavlink_msg_total_status_pack(system_id, component_id, msg, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->battery_function, total_status->battery_type, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->vehicle_type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed, total_status->time_remaining, total_status->charge_state, total_status->battery_mode, total_status->fault_bitmask, total_status->alt_ellipsoid, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->gps_yaw);
 }
 
 /**
@@ -510,7 +573,7 @@ static inline uint16_t mavlink_msg_total_status_encode(uint8_t system_id, uint8_
  */
 static inline uint16_t mavlink_msg_total_status_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_total_status_t* total_status)
 {
-    return mavlink_msg_total_status_pack_chan(system_id, component_id, chan, msg, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
+    return mavlink_msg_total_status_pack_chan(system_id, component_id, chan, msg, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->battery_function, total_status->battery_type, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->vehicle_type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed, total_status->time_remaining, total_status->charge_state, total_status->battery_mode, total_status->fault_bitmask, total_status->alt_ellipsoid, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->gps_yaw);
 }
 
 /**
@@ -530,7 +593,8 @@ static inline uint16_t mavlink_msg_total_status_encode_chan(uint8_t system_id, u
  * @param current_battery [cA] Battery current, -1: Current not sent by autopilot
  * @param battery_id  Battery ID
  * @param battery_remaining [%] Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery.
- * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
+ * @param battery_function  Function of the battery
+ * @param battery_type  Type (chemistry) of the battery
  * @param onboard_control_sensors_present  Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.
  * @param onboard_control_sensors_enabled  Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.
  * @param onboard_control_sensors_health  Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.
@@ -545,11 +609,7 @@ static inline uint16_t mavlink_msg_total_status_encode_chan(uint8_t system_id, u
  * @param vel [cm/s] GPS ground speed. If unknown, set to: UINT16_MAX
  * @param cog [cdeg] Course over ground (NOT heading, but direction of movement) in degrees * 100, 0.0..359.99 degrees. If unknown, set to: UINT16_MAX
  * @param satellites_visible  Number of satellites visible. If unknown, set to UINT8_MAX
- * @param h_acc [mm] Position uncertainty.
- * @param v_acc [mm] Altitude uncertainty.
- * @param vel_acc [mm] Speed uncertainty.
- * @param hdg_acc [degE5] Heading / track uncertainty
- * @param type  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.
+ * @param vehicle_type  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.
  * @param autopilot  Autopilot type / class. Use MAV_AUTOPILOT_INVALID for components that are not flight controllers.
  * @param base_mode  System mode bitmap.
  * @param custom_mode  A bitfield for use for autopilot-specific flags
@@ -561,10 +621,20 @@ static inline uint16_t mavlink_msg_total_status_encode_chan(uint8_t system_id, u
  * @param remnoise  Remote background noise level. These are device dependent RSSI values (scale as approx 2x dB on SiK radios). Values: [0-254], UINT8_MAX: invalid/unknown.
  * @param rxerrors  Count of radio packet receive errors (since boot).
  * @param fixed  Count of error corrected radio packets (since boot).
+ * @param time_remaining [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
+ * @param charge_state  State for extent of discharge, provided by autopilot for warning or external reactions
+ * @param battery_mode  Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode.
+ * @param fault_bitmask  Fault/health indications. These should be set when charge_state is MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY (if not, fault reporting is not supported).
+ * @param alt_ellipsoid [mm] Altitude (above WGS84, EGM96 ellipsoid). Positive for up.
+ * @param h_acc [mm] Position uncertainty.
+ * @param v_acc [mm] Altitude uncertainty.
+ * @param vel_acc [mm] Speed uncertainty.
+ * @param hdg_acc [degE5] Heading / track uncertainty
+ * @param gps_yaw [cdeg] Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use UINT16_MAX if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
+static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, uint8_t battery_function, uint8_t battery_type, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint8_t vehicle_type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed, int32_t time_remaining, uint8_t charge_state, uint8_t battery_mode, uint32_t fault_bitmask, int32_t alt_ellipsoid, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint16_t gps_yaw)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TOTAL_STATUS_LEN];
@@ -578,41 +648,48 @@ static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_
     _mav_put_float(buf, 32, yawspeed);
     _mav_put_int32_t(buf, 36, current_consumed);
     _mav_put_int32_t(buf, 40, energy_consumed);
-    _mav_put_int32_t(buf, 44, time_remaining);
-    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present);
-    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled);
-    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health);
-    _mav_put_int32_t(buf, 60, lat);
-    _mav_put_int32_t(buf, 64, lon);
-    _mav_put_int32_t(buf, 68, alt);
-    _mav_put_uint32_t(buf, 72, h_acc);
-    _mav_put_uint32_t(buf, 76, v_acc);
-    _mav_put_uint32_t(buf, 80, vel_acc);
-    _mav_put_uint32_t(buf, 84, hdg_acc);
-    _mav_put_uint32_t(buf, 88, custom_mode);
-    _mav_put_uint16_t(buf, 92, voltage_battery);
-    _mav_put_int16_t(buf, 94, current_battery);
-    _mav_put_uint16_t(buf, 96, load);
-    _mav_put_uint16_t(buf, 98, eph);
-    _mav_put_uint16_t(buf, 100, epv);
-    _mav_put_uint16_t(buf, 102, vel);
-    _mav_put_uint16_t(buf, 104, cog);
-    _mav_put_uint16_t(buf, 106, rxerrors);
-    _mav_put_uint16_t(buf, 108, fixed);
-    _mav_put_uint8_t(buf, 110, battery_id);
-    _mav_put_int8_t(buf, 111, battery_remaining);
-    _mav_put_uint8_t(buf, 112, fix_type);
-    _mav_put_uint8_t(buf, 113, satellites_visible);
-    _mav_put_uint8_t(buf, 114, type);
-    _mav_put_uint8_t(buf, 115, autopilot);
-    _mav_put_uint8_t(buf, 116, base_mode);
-    _mav_put_uint8_t(buf, 117, system_status);
-    _mav_put_uint8_t(buf, 118, 2);
-    _mav_put_uint8_t(buf, 119, rssi);
-    _mav_put_uint8_t(buf, 120, remrssi);
-    _mav_put_uint8_t(buf, 121, txbuf);
-    _mav_put_uint8_t(buf, 122, noise);
-    _mav_put_uint8_t(buf, 123, remnoise);
+    _mav_put_uint32_t(buf, 44, onboard_control_sensors_present);
+    _mav_put_uint32_t(buf, 48, onboard_control_sensors_enabled);
+    _mav_put_uint32_t(buf, 52, onboard_control_sensors_health);
+    _mav_put_int32_t(buf, 56, lat);
+    _mav_put_int32_t(buf, 60, lon);
+    _mav_put_int32_t(buf, 64, alt);
+    _mav_put_uint32_t(buf, 68, custom_mode);
+    _mav_put_uint16_t(buf, 72, voltage_battery);
+    _mav_put_int16_t(buf, 74, current_battery);
+    _mav_put_uint16_t(buf, 76, load);
+    _mav_put_uint16_t(buf, 78, eph);
+    _mav_put_uint16_t(buf, 80, epv);
+    _mav_put_uint16_t(buf, 82, vel);
+    _mav_put_uint16_t(buf, 84, cog);
+    _mav_put_uint16_t(buf, 86, rxerrors);
+    _mav_put_uint16_t(buf, 88, fixed);
+    _mav_put_uint8_t(buf, 90, battery_id);
+    _mav_put_int8_t(buf, 91, battery_remaining);
+    _mav_put_uint8_t(buf, 92, battery_function);
+    _mav_put_uint8_t(buf, 93, battery_type);
+    _mav_put_uint8_t(buf, 94, fix_type);
+    _mav_put_uint8_t(buf, 95, satellites_visible);
+    _mav_put_uint8_t(buf, 96, vehicle_type);
+    _mav_put_uint8_t(buf, 97, autopilot);
+    _mav_put_uint8_t(buf, 98, base_mode);
+    _mav_put_uint8_t(buf, 99, system_status);
+    _mav_put_uint8_t(buf, 100, 2);
+    _mav_put_uint8_t(buf, 101, rssi);
+    _mav_put_uint8_t(buf, 102, remrssi);
+    _mav_put_uint8_t(buf, 103, txbuf);
+    _mav_put_uint8_t(buf, 104, noise);
+    _mav_put_uint8_t(buf, 105, remnoise);
+    _mav_put_int32_t(buf, 106, time_remaining);
+    _mav_put_uint8_t(buf, 110, charge_state);
+    _mav_put_uint8_t(buf, 111, battery_mode);
+    _mav_put_uint32_t(buf, 112, fault_bitmask);
+    _mav_put_int32_t(buf, 116, alt_ellipsoid);
+    _mav_put_uint32_t(buf, 120, h_acc);
+    _mav_put_uint32_t(buf, 124, v_acc);
+    _mav_put_uint32_t(buf, 128, vel_acc);
+    _mav_put_uint32_t(buf, 132, hdg_acc);
+    _mav_put_uint16_t(buf, 136, gps_yaw);
 
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOTAL_STATUS, buf, MAVLINK_MSG_ID_TOTAL_STATUS_MIN_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_CRC);
 #else
@@ -627,17 +704,12 @@ static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_
     packet.yawspeed = yawspeed;
     packet.current_consumed = current_consumed;
     packet.energy_consumed = energy_consumed;
-    packet.time_remaining = time_remaining;
     packet.onboard_control_sensors_present = onboard_control_sensors_present;
     packet.onboard_control_sensors_enabled = onboard_control_sensors_enabled;
     packet.onboard_control_sensors_health = onboard_control_sensors_health;
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
-    packet.h_acc = h_acc;
-    packet.v_acc = v_acc;
-    packet.vel_acc = vel_acc;
-    packet.hdg_acc = hdg_acc;
     packet.custom_mode = custom_mode;
     packet.voltage_battery = voltage_battery;
     packet.current_battery = current_battery;
@@ -650,9 +722,11 @@ static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_
     packet.fixed = fixed;
     packet.battery_id = battery_id;
     packet.battery_remaining = battery_remaining;
+    packet.battery_function = battery_function;
+    packet.battery_type = battery_type;
     packet.fix_type = fix_type;
     packet.satellites_visible = satellites_visible;
-    packet.type = type;
+    packet.vehicle_type = vehicle_type;
     packet.autopilot = autopilot;
     packet.base_mode = base_mode;
     packet.system_status = system_status;
@@ -662,6 +736,16 @@ static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_
     packet.txbuf = txbuf;
     packet.noise = noise;
     packet.remnoise = remnoise;
+    packet.time_remaining = time_remaining;
+    packet.charge_state = charge_state;
+    packet.battery_mode = battery_mode;
+    packet.fault_bitmask = fault_bitmask;
+    packet.alt_ellipsoid = alt_ellipsoid;
+    packet.h_acc = h_acc;
+    packet.v_acc = v_acc;
+    packet.vel_acc = vel_acc;
+    packet.hdg_acc = hdg_acc;
+    packet.gps_yaw = gps_yaw;
 
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOTAL_STATUS, (const char *)&packet, MAVLINK_MSG_ID_TOTAL_STATUS_MIN_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_CRC);
 #endif
@@ -675,7 +759,7 @@ static inline void mavlink_msg_total_status_send(mavlink_channel_t chan, uint32_
 static inline void mavlink_msg_total_status_send_struct(mavlink_channel_t chan, const mavlink_total_status_t* total_status)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-    mavlink_msg_total_status_send(chan, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->time_remaining, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed);
+    mavlink_msg_total_status_send(chan, total_status->time_boot_ms, total_status->roll, total_status->pitch, total_status->yaw, total_status->rollspeed, total_status->pitchspeed, total_status->yawspeed, total_status->current_consumed, total_status->energy_consumed, total_status->voltage_battery, total_status->current_battery, total_status->battery_id, total_status->battery_remaining, total_status->battery_function, total_status->battery_type, total_status->onboard_control_sensors_present, total_status->onboard_control_sensors_enabled, total_status->onboard_control_sensors_health, total_status->load, total_status->time_usec, total_status->fix_type, total_status->lat, total_status->lon, total_status->alt, total_status->eph, total_status->epv, total_status->vel, total_status->cog, total_status->satellites_visible, total_status->vehicle_type, total_status->autopilot, total_status->base_mode, total_status->custom_mode, total_status->system_status, total_status->rssi, total_status->remrssi, total_status->txbuf, total_status->noise, total_status->remnoise, total_status->rxerrors, total_status->fixed, total_status->time_remaining, total_status->charge_state, total_status->battery_mode, total_status->fault_bitmask, total_status->alt_ellipsoid, total_status->h_acc, total_status->v_acc, total_status->vel_acc, total_status->hdg_acc, total_status->gps_yaw);
 #else
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOTAL_STATUS, (const char *)total_status, MAVLINK_MSG_ID_TOTAL_STATUS_MIN_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_CRC);
 #endif
@@ -689,7 +773,7 @@ static inline void mavlink_msg_total_status_send_struct(mavlink_channel_t chan, 
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, int32_t time_remaining, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint8_t type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed)
+static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint32_t time_boot_ms, float roll, float pitch, float yaw, float rollspeed, float pitchspeed, float yawspeed, int32_t current_consumed, int32_t energy_consumed, uint16_t voltage_battery, int16_t current_battery, uint8_t battery_id, int8_t battery_remaining, uint8_t battery_function, uint8_t battery_type, uint32_t onboard_control_sensors_present, uint32_t onboard_control_sensors_enabled, uint32_t onboard_control_sensors_health, uint16_t load, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible, uint8_t vehicle_type, uint8_t autopilot, uint8_t base_mode, uint32_t custom_mode, uint8_t system_status, uint8_t rssi, uint8_t remrssi, uint8_t txbuf, uint8_t noise, uint8_t remnoise, uint16_t rxerrors, uint16_t fixed, int32_t time_remaining, uint8_t charge_state, uint8_t battery_mode, uint32_t fault_bitmask, int32_t alt_ellipsoid, uint32_t h_acc, uint32_t v_acc, uint32_t vel_acc, uint32_t hdg_acc, uint16_t gps_yaw)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char *buf = (char *)msgbuf;
@@ -703,41 +787,48 @@ static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, 
     _mav_put_float(buf, 32, yawspeed);
     _mav_put_int32_t(buf, 36, current_consumed);
     _mav_put_int32_t(buf, 40, energy_consumed);
-    _mav_put_int32_t(buf, 44, time_remaining);
-    _mav_put_uint32_t(buf, 48, onboard_control_sensors_present);
-    _mav_put_uint32_t(buf, 52, onboard_control_sensors_enabled);
-    _mav_put_uint32_t(buf, 56, onboard_control_sensors_health);
-    _mav_put_int32_t(buf, 60, lat);
-    _mav_put_int32_t(buf, 64, lon);
-    _mav_put_int32_t(buf, 68, alt);
-    _mav_put_uint32_t(buf, 72, h_acc);
-    _mav_put_uint32_t(buf, 76, v_acc);
-    _mav_put_uint32_t(buf, 80, vel_acc);
-    _mav_put_uint32_t(buf, 84, hdg_acc);
-    _mav_put_uint32_t(buf, 88, custom_mode);
-    _mav_put_uint16_t(buf, 92, voltage_battery);
-    _mav_put_int16_t(buf, 94, current_battery);
-    _mav_put_uint16_t(buf, 96, load);
-    _mav_put_uint16_t(buf, 98, eph);
-    _mav_put_uint16_t(buf, 100, epv);
-    _mav_put_uint16_t(buf, 102, vel);
-    _mav_put_uint16_t(buf, 104, cog);
-    _mav_put_uint16_t(buf, 106, rxerrors);
-    _mav_put_uint16_t(buf, 108, fixed);
-    _mav_put_uint8_t(buf, 110, battery_id);
-    _mav_put_int8_t(buf, 111, battery_remaining);
-    _mav_put_uint8_t(buf, 112, fix_type);
-    _mav_put_uint8_t(buf, 113, satellites_visible);
-    _mav_put_uint8_t(buf, 114, type);
-    _mav_put_uint8_t(buf, 115, autopilot);
-    _mav_put_uint8_t(buf, 116, base_mode);
-    _mav_put_uint8_t(buf, 117, system_status);
-    _mav_put_uint8_t(buf, 118, 2);
-    _mav_put_uint8_t(buf, 119, rssi);
-    _mav_put_uint8_t(buf, 120, remrssi);
-    _mav_put_uint8_t(buf, 121, txbuf);
-    _mav_put_uint8_t(buf, 122, noise);
-    _mav_put_uint8_t(buf, 123, remnoise);
+    _mav_put_uint32_t(buf, 44, onboard_control_sensors_present);
+    _mav_put_uint32_t(buf, 48, onboard_control_sensors_enabled);
+    _mav_put_uint32_t(buf, 52, onboard_control_sensors_health);
+    _mav_put_int32_t(buf, 56, lat);
+    _mav_put_int32_t(buf, 60, lon);
+    _mav_put_int32_t(buf, 64, alt);
+    _mav_put_uint32_t(buf, 68, custom_mode);
+    _mav_put_uint16_t(buf, 72, voltage_battery);
+    _mav_put_int16_t(buf, 74, current_battery);
+    _mav_put_uint16_t(buf, 76, load);
+    _mav_put_uint16_t(buf, 78, eph);
+    _mav_put_uint16_t(buf, 80, epv);
+    _mav_put_uint16_t(buf, 82, vel);
+    _mav_put_uint16_t(buf, 84, cog);
+    _mav_put_uint16_t(buf, 86, rxerrors);
+    _mav_put_uint16_t(buf, 88, fixed);
+    _mav_put_uint8_t(buf, 90, battery_id);
+    _mav_put_int8_t(buf, 91, battery_remaining);
+    _mav_put_uint8_t(buf, 92, battery_function);
+    _mav_put_uint8_t(buf, 93, battery_type);
+    _mav_put_uint8_t(buf, 94, fix_type);
+    _mav_put_uint8_t(buf, 95, satellites_visible);
+    _mav_put_uint8_t(buf, 96, vehicle_type);
+    _mav_put_uint8_t(buf, 97, autopilot);
+    _mav_put_uint8_t(buf, 98, base_mode);
+    _mav_put_uint8_t(buf, 99, system_status);
+    _mav_put_uint8_t(buf, 100, 2);
+    _mav_put_uint8_t(buf, 101, rssi);
+    _mav_put_uint8_t(buf, 102, remrssi);
+    _mav_put_uint8_t(buf, 103, txbuf);
+    _mav_put_uint8_t(buf, 104, noise);
+    _mav_put_uint8_t(buf, 105, remnoise);
+    _mav_put_int32_t(buf, 106, time_remaining);
+    _mav_put_uint8_t(buf, 110, charge_state);
+    _mav_put_uint8_t(buf, 111, battery_mode);
+    _mav_put_uint32_t(buf, 112, fault_bitmask);
+    _mav_put_int32_t(buf, 116, alt_ellipsoid);
+    _mav_put_uint32_t(buf, 120, h_acc);
+    _mav_put_uint32_t(buf, 124, v_acc);
+    _mav_put_uint32_t(buf, 128, vel_acc);
+    _mav_put_uint32_t(buf, 132, hdg_acc);
+    _mav_put_uint16_t(buf, 136, gps_yaw);
 
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOTAL_STATUS, buf, MAVLINK_MSG_ID_TOTAL_STATUS_MIN_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_CRC);
 #else
@@ -752,17 +843,12 @@ static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, 
     packet->yawspeed = yawspeed;
     packet->current_consumed = current_consumed;
     packet->energy_consumed = energy_consumed;
-    packet->time_remaining = time_remaining;
     packet->onboard_control_sensors_present = onboard_control_sensors_present;
     packet->onboard_control_sensors_enabled = onboard_control_sensors_enabled;
     packet->onboard_control_sensors_health = onboard_control_sensors_health;
     packet->lat = lat;
     packet->lon = lon;
     packet->alt = alt;
-    packet->h_acc = h_acc;
-    packet->v_acc = v_acc;
-    packet->vel_acc = vel_acc;
-    packet->hdg_acc = hdg_acc;
     packet->custom_mode = custom_mode;
     packet->voltage_battery = voltage_battery;
     packet->current_battery = current_battery;
@@ -775,9 +861,11 @@ static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, 
     packet->fixed = fixed;
     packet->battery_id = battery_id;
     packet->battery_remaining = battery_remaining;
+    packet->battery_function = battery_function;
+    packet->battery_type = battery_type;
     packet->fix_type = fix_type;
     packet->satellites_visible = satellites_visible;
-    packet->type = type;
+    packet->vehicle_type = vehicle_type;
     packet->autopilot = autopilot;
     packet->base_mode = base_mode;
     packet->system_status = system_status;
@@ -787,6 +875,16 @@ static inline void mavlink_msg_total_status_send_buf(mavlink_message_t *msgbuf, 
     packet->txbuf = txbuf;
     packet->noise = noise;
     packet->remnoise = remnoise;
+    packet->time_remaining = time_remaining;
+    packet->charge_state = charge_state;
+    packet->battery_mode = battery_mode;
+    packet->fault_bitmask = fault_bitmask;
+    packet->alt_ellipsoid = alt_ellipsoid;
+    packet->h_acc = h_acc;
+    packet->v_acc = v_acc;
+    packet->vel_acc = vel_acc;
+    packet->hdg_acc = hdg_acc;
+    packet->gps_yaw = gps_yaw;
 
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TOTAL_STATUS, (const char *)packet, MAVLINK_MSG_ID_TOTAL_STATUS_MIN_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_LEN, MAVLINK_MSG_ID_TOTAL_STATUS_CRC);
 #endif
@@ -895,7 +993,7 @@ static inline int32_t mavlink_msg_total_status_get_energy_consumed(const mavlink
  */
 static inline uint16_t mavlink_msg_total_status_get_voltage_battery(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t(msg,  92);
+    return _MAV_RETURN_uint16_t(msg,  72);
 }
 
 /**
@@ -905,7 +1003,7 @@ static inline uint16_t mavlink_msg_total_status_get_voltage_battery(const mavlin
  */
 static inline int16_t mavlink_msg_total_status_get_current_battery(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_int16_t(msg,  94);
+    return _MAV_RETURN_int16_t(msg,  74);
 }
 
 /**
@@ -915,7 +1013,7 @@ static inline int16_t mavlink_msg_total_status_get_current_battery(const mavlink
  */
 static inline uint8_t mavlink_msg_total_status_get_battery_id(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  110);
+    return _MAV_RETURN_uint8_t(msg,  90);
 }
 
 /**
@@ -925,17 +1023,27 @@ static inline uint8_t mavlink_msg_total_status_get_battery_id(const mavlink_mess
  */
 static inline int8_t mavlink_msg_total_status_get_battery_remaining(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_int8_t(msg,  111);
+    return _MAV_RETURN_int8_t(msg,  91);
 }
 
 /**
- * @brief Get field time_remaining from total_status message
+ * @brief Get field battery_function from total_status message
  *
- * @return [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
+ * @return  Function of the battery
  */
-static inline int32_t mavlink_msg_total_status_get_time_remaining(const mavlink_message_t* msg)
+static inline uint8_t mavlink_msg_total_status_get_battery_function(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_int32_t(msg,  44);
+    return _MAV_RETURN_uint8_t(msg,  92);
+}
+
+/**
+ * @brief Get field battery_type from total_status message
+ *
+ * @return  Type (chemistry) of the battery
+ */
+static inline uint8_t mavlink_msg_total_status_get_battery_type(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint8_t(msg,  93);
 }
 
 /**
@@ -945,7 +1053,7 @@ static inline int32_t mavlink_msg_total_status_get_time_remaining(const mavlink_
  */
 static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_present(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint32_t(msg,  48);
+    return _MAV_RETURN_uint32_t(msg,  44);
 }
 
 /**
@@ -955,7 +1063,7 @@ static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_pres
  */
 static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_enabled(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint32_t(msg,  52);
+    return _MAV_RETURN_uint32_t(msg,  48);
 }
 
 /**
@@ -965,7 +1073,7 @@ static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_enab
  */
 static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_health(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint32_t(msg,  56);
+    return _MAV_RETURN_uint32_t(msg,  52);
 }
 
 /**
@@ -975,7 +1083,7 @@ static inline uint32_t mavlink_msg_total_status_get_onboard_control_sensors_heal
  */
 static inline uint16_t mavlink_msg_total_status_get_load(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t(msg,  96);
+    return _MAV_RETURN_uint16_t(msg,  76);
 }
 
 /**
@@ -995,7 +1103,7 @@ static inline uint64_t mavlink_msg_total_status_get_time_usec(const mavlink_mess
  */
 static inline uint8_t mavlink_msg_total_status_get_fix_type(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  112);
+    return _MAV_RETURN_uint8_t(msg,  94);
 }
 
 /**
@@ -1005,7 +1113,7 @@ static inline uint8_t mavlink_msg_total_status_get_fix_type(const mavlink_messag
  */
 static inline int32_t mavlink_msg_total_status_get_lat(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_int32_t(msg,  60);
+    return _MAV_RETURN_int32_t(msg,  56);
 }
 
 /**
@@ -1015,7 +1123,7 @@ static inline int32_t mavlink_msg_total_status_get_lat(const mavlink_message_t* 
  */
 static inline int32_t mavlink_msg_total_status_get_lon(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_int32_t(msg,  64);
+    return _MAV_RETURN_int32_t(msg,  60);
 }
 
 /**
@@ -1025,7 +1133,7 @@ static inline int32_t mavlink_msg_total_status_get_lon(const mavlink_message_t* 
  */
 static inline int32_t mavlink_msg_total_status_get_alt(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_int32_t(msg,  68);
+    return _MAV_RETURN_int32_t(msg,  64);
 }
 
 /**
@@ -1035,7 +1143,7 @@ static inline int32_t mavlink_msg_total_status_get_alt(const mavlink_message_t* 
  */
 static inline uint16_t mavlink_msg_total_status_get_eph(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t(msg,  98);
+    return _MAV_RETURN_uint16_t(msg,  78);
 }
 
 /**
@@ -1045,7 +1153,7 @@ static inline uint16_t mavlink_msg_total_status_get_eph(const mavlink_message_t*
  */
 static inline uint16_t mavlink_msg_total_status_get_epv(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t(msg,  100);
+    return _MAV_RETURN_uint16_t(msg,  80);
 }
 
 /**
@@ -1055,7 +1163,7 @@ static inline uint16_t mavlink_msg_total_status_get_epv(const mavlink_message_t*
  */
 static inline uint16_t mavlink_msg_total_status_get_vel(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t(msg,  102);
+    return _MAV_RETURN_uint16_t(msg,  82);
 }
 
 /**
@@ -1065,7 +1173,7 @@ static inline uint16_t mavlink_msg_total_status_get_vel(const mavlink_message_t*
  */
 static inline uint16_t mavlink_msg_total_status_get_cog(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t(msg,  104);
+    return _MAV_RETURN_uint16_t(msg,  84);
 }
 
 /**
@@ -1075,57 +1183,17 @@ static inline uint16_t mavlink_msg_total_status_get_cog(const mavlink_message_t*
  */
 static inline uint8_t mavlink_msg_total_status_get_satellites_visible(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  113);
+    return _MAV_RETURN_uint8_t(msg,  95);
 }
 
 /**
- * @brief Get field h_acc from total_status message
- *
- * @return [mm] Position uncertainty.
- */
-static inline uint32_t mavlink_msg_total_status_get_h_acc(const mavlink_message_t* msg)
-{
-    return _MAV_RETURN_uint32_t(msg,  72);
-}
-
-/**
- * @brief Get field v_acc from total_status message
- *
- * @return [mm] Altitude uncertainty.
- */
-static inline uint32_t mavlink_msg_total_status_get_v_acc(const mavlink_message_t* msg)
-{
-    return _MAV_RETURN_uint32_t(msg,  76);
-}
-
-/**
- * @brief Get field vel_acc from total_status message
- *
- * @return [mm] Speed uncertainty.
- */
-static inline uint32_t mavlink_msg_total_status_get_vel_acc(const mavlink_message_t* msg)
-{
-    return _MAV_RETURN_uint32_t(msg,  80);
-}
-
-/**
- * @brief Get field hdg_acc from total_status message
- *
- * @return [degE5] Heading / track uncertainty
- */
-static inline uint32_t mavlink_msg_total_status_get_hdg_acc(const mavlink_message_t* msg)
-{
-    return _MAV_RETURN_uint32_t(msg,  84);
-}
-
-/**
- * @brief Get field type from total_status message
+ * @brief Get field vehicle_type from total_status message
  *
  * @return  Vehicle or component type. For a flight controller component the vehicle type (quadrotor, helicopter, etc.). For other components the component type (e.g. camera, gimbal, etc.). This should be used in preference to component id for identifying the component type.
  */
-static inline uint8_t mavlink_msg_total_status_get_type(const mavlink_message_t* msg)
+static inline uint8_t mavlink_msg_total_status_get_vehicle_type(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  114);
+    return _MAV_RETURN_uint8_t(msg,  96);
 }
 
 /**
@@ -1135,7 +1203,7 @@ static inline uint8_t mavlink_msg_total_status_get_type(const mavlink_message_t*
  */
 static inline uint8_t mavlink_msg_total_status_get_autopilot(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  115);
+    return _MAV_RETURN_uint8_t(msg,  97);
 }
 
 /**
@@ -1145,7 +1213,7 @@ static inline uint8_t mavlink_msg_total_status_get_autopilot(const mavlink_messa
  */
 static inline uint8_t mavlink_msg_total_status_get_base_mode(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  116);
+    return _MAV_RETURN_uint8_t(msg,  98);
 }
 
 /**
@@ -1155,7 +1223,7 @@ static inline uint8_t mavlink_msg_total_status_get_base_mode(const mavlink_messa
  */
 static inline uint32_t mavlink_msg_total_status_get_custom_mode(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint32_t(msg,  88);
+    return _MAV_RETURN_uint32_t(msg,  68);
 }
 
 /**
@@ -1165,7 +1233,7 @@ static inline uint32_t mavlink_msg_total_status_get_custom_mode(const mavlink_me
  */
 static inline uint8_t mavlink_msg_total_status_get_system_status(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  117);
+    return _MAV_RETURN_uint8_t(msg,  99);
 }
 
 /**
@@ -1175,7 +1243,7 @@ static inline uint8_t mavlink_msg_total_status_get_system_status(const mavlink_m
  */
 static inline uint8_t mavlink_msg_total_status_get_mavlink_version(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  118);
+    return _MAV_RETURN_uint8_t(msg,  100);
 }
 
 /**
@@ -1185,7 +1253,7 @@ static inline uint8_t mavlink_msg_total_status_get_mavlink_version(const mavlink
  */
 static inline uint8_t mavlink_msg_total_status_get_rssi(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  119);
+    return _MAV_RETURN_uint8_t(msg,  101);
 }
 
 /**
@@ -1195,7 +1263,7 @@ static inline uint8_t mavlink_msg_total_status_get_rssi(const mavlink_message_t*
  */
 static inline uint8_t mavlink_msg_total_status_get_remrssi(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  120);
+    return _MAV_RETURN_uint8_t(msg,  102);
 }
 
 /**
@@ -1205,7 +1273,7 @@ static inline uint8_t mavlink_msg_total_status_get_remrssi(const mavlink_message
  */
 static inline uint8_t mavlink_msg_total_status_get_txbuf(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  121);
+    return _MAV_RETURN_uint8_t(msg,  103);
 }
 
 /**
@@ -1215,7 +1283,7 @@ static inline uint8_t mavlink_msg_total_status_get_txbuf(const mavlink_message_t
  */
 static inline uint8_t mavlink_msg_total_status_get_noise(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  122);
+    return _MAV_RETURN_uint8_t(msg,  104);
 }
 
 /**
@@ -1225,7 +1293,7 @@ static inline uint8_t mavlink_msg_total_status_get_noise(const mavlink_message_t
  */
 static inline uint8_t mavlink_msg_total_status_get_remnoise(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  123);
+    return _MAV_RETURN_uint8_t(msg,  105);
 }
 
 /**
@@ -1235,7 +1303,7 @@ static inline uint8_t mavlink_msg_total_status_get_remnoise(const mavlink_messag
  */
 static inline uint16_t mavlink_msg_total_status_get_rxerrors(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t(msg,  106);
+    return _MAV_RETURN_uint16_t(msg,  86);
 }
 
 /**
@@ -1245,7 +1313,107 @@ static inline uint16_t mavlink_msg_total_status_get_rxerrors(const mavlink_messa
  */
 static inline uint16_t mavlink_msg_total_status_get_fixed(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t(msg,  108);
+    return _MAV_RETURN_uint16_t(msg,  88);
+}
+
+/**
+ * @brief Get field time_remaining from total_status message
+ *
+ * @return [s] Remaining battery time, 0: autopilot does not provide remaining battery time estimate
+ */
+static inline int32_t mavlink_msg_total_status_get_time_remaining(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_int32_t(msg,  106);
+}
+
+/**
+ * @brief Get field charge_state from total_status message
+ *
+ * @return  State for extent of discharge, provided by autopilot for warning or external reactions
+ */
+static inline uint8_t mavlink_msg_total_status_get_charge_state(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint8_t(msg,  110);
+}
+
+/**
+ * @brief Get field battery_mode from total_status message
+ *
+ * @return  Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode.
+ */
+static inline uint8_t mavlink_msg_total_status_get_battery_mode(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint8_t(msg,  111);
+}
+
+/**
+ * @brief Get field fault_bitmask from total_status message
+ *
+ * @return  Fault/health indications. These should be set when charge_state is MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY (if not, fault reporting is not supported).
+ */
+static inline uint32_t mavlink_msg_total_status_get_fault_bitmask(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint32_t(msg,  112);
+}
+
+/**
+ * @brief Get field alt_ellipsoid from total_status message
+ *
+ * @return [mm] Altitude (above WGS84, EGM96 ellipsoid). Positive for up.
+ */
+static inline int32_t mavlink_msg_total_status_get_alt_ellipsoid(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_int32_t(msg,  116);
+}
+
+/**
+ * @brief Get field h_acc from total_status message
+ *
+ * @return [mm] Position uncertainty.
+ */
+static inline uint32_t mavlink_msg_total_status_get_h_acc(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint32_t(msg,  120);
+}
+
+/**
+ * @brief Get field v_acc from total_status message
+ *
+ * @return [mm] Altitude uncertainty.
+ */
+static inline uint32_t mavlink_msg_total_status_get_v_acc(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint32_t(msg,  124);
+}
+
+/**
+ * @brief Get field vel_acc from total_status message
+ *
+ * @return [mm] Speed uncertainty.
+ */
+static inline uint32_t mavlink_msg_total_status_get_vel_acc(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint32_t(msg,  128);
+}
+
+/**
+ * @brief Get field hdg_acc from total_status message
+ *
+ * @return [degE5] Heading / track uncertainty
+ */
+static inline uint32_t mavlink_msg_total_status_get_hdg_acc(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint32_t(msg,  132);
+}
+
+/**
+ * @brief Get field gps_yaw from total_status message
+ *
+ * @return [cdeg] Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use UINT16_MAX if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
+ */
+static inline uint16_t mavlink_msg_total_status_get_gps_yaw(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_uint16_t(msg,  136);
 }
 
 /**
@@ -1267,17 +1435,12 @@ static inline void mavlink_msg_total_status_decode(const mavlink_message_t* msg,
     total_status->yawspeed = mavlink_msg_total_status_get_yawspeed(msg);
     total_status->current_consumed = mavlink_msg_total_status_get_current_consumed(msg);
     total_status->energy_consumed = mavlink_msg_total_status_get_energy_consumed(msg);
-    total_status->time_remaining = mavlink_msg_total_status_get_time_remaining(msg);
     total_status->onboard_control_sensors_present = mavlink_msg_total_status_get_onboard_control_sensors_present(msg);
     total_status->onboard_control_sensors_enabled = mavlink_msg_total_status_get_onboard_control_sensors_enabled(msg);
     total_status->onboard_control_sensors_health = mavlink_msg_total_status_get_onboard_control_sensors_health(msg);
     total_status->lat = mavlink_msg_total_status_get_lat(msg);
     total_status->lon = mavlink_msg_total_status_get_lon(msg);
     total_status->alt = mavlink_msg_total_status_get_alt(msg);
-    total_status->h_acc = mavlink_msg_total_status_get_h_acc(msg);
-    total_status->v_acc = mavlink_msg_total_status_get_v_acc(msg);
-    total_status->vel_acc = mavlink_msg_total_status_get_vel_acc(msg);
-    total_status->hdg_acc = mavlink_msg_total_status_get_hdg_acc(msg);
     total_status->custom_mode = mavlink_msg_total_status_get_custom_mode(msg);
     total_status->voltage_battery = mavlink_msg_total_status_get_voltage_battery(msg);
     total_status->current_battery = mavlink_msg_total_status_get_current_battery(msg);
@@ -1290,9 +1453,11 @@ static inline void mavlink_msg_total_status_decode(const mavlink_message_t* msg,
     total_status->fixed = mavlink_msg_total_status_get_fixed(msg);
     total_status->battery_id = mavlink_msg_total_status_get_battery_id(msg);
     total_status->battery_remaining = mavlink_msg_total_status_get_battery_remaining(msg);
+    total_status->battery_function = mavlink_msg_total_status_get_battery_function(msg);
+    total_status->battery_type = mavlink_msg_total_status_get_battery_type(msg);
     total_status->fix_type = mavlink_msg_total_status_get_fix_type(msg);
     total_status->satellites_visible = mavlink_msg_total_status_get_satellites_visible(msg);
-    total_status->type = mavlink_msg_total_status_get_type(msg);
+    total_status->vehicle_type = mavlink_msg_total_status_get_vehicle_type(msg);
     total_status->autopilot = mavlink_msg_total_status_get_autopilot(msg);
     total_status->base_mode = mavlink_msg_total_status_get_base_mode(msg);
     total_status->system_status = mavlink_msg_total_status_get_system_status(msg);
@@ -1302,6 +1467,16 @@ static inline void mavlink_msg_total_status_decode(const mavlink_message_t* msg,
     total_status->txbuf = mavlink_msg_total_status_get_txbuf(msg);
     total_status->noise = mavlink_msg_total_status_get_noise(msg);
     total_status->remnoise = mavlink_msg_total_status_get_remnoise(msg);
+    total_status->time_remaining = mavlink_msg_total_status_get_time_remaining(msg);
+    total_status->charge_state = mavlink_msg_total_status_get_charge_state(msg);
+    total_status->battery_mode = mavlink_msg_total_status_get_battery_mode(msg);
+    total_status->fault_bitmask = mavlink_msg_total_status_get_fault_bitmask(msg);
+    total_status->alt_ellipsoid = mavlink_msg_total_status_get_alt_ellipsoid(msg);
+    total_status->h_acc = mavlink_msg_total_status_get_h_acc(msg);
+    total_status->v_acc = mavlink_msg_total_status_get_v_acc(msg);
+    total_status->vel_acc = mavlink_msg_total_status_get_vel_acc(msg);
+    total_status->hdg_acc = mavlink_msg_total_status_get_hdg_acc(msg);
+    total_status->gps_yaw = mavlink_msg_total_status_get_gps_yaw(msg);
 #else
         uint8_t len = msg->len < MAVLINK_MSG_ID_TOTAL_STATUS_LEN? msg->len : MAVLINK_MSG_ID_TOTAL_STATUS_LEN;
         memset(total_status, 0, MAVLINK_MSG_ID_TOTAL_STATUS_LEN);
