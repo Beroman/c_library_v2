@@ -5,9 +5,9 @@
 
 
 typedef struct __mavlink_param_value_group_t {
- float param_value[9]; /*<  Onboard parameter value*/
- uint16_t param_count[9]; /*<  Total number of onboard parameters*/
- uint16_t param_index[9]; /*<  Index of this onboard parameter*/
+ float param_value[10]; /*<  Onboard parameter value*/
+ uint16_t param_count; /*<  Total number of onboard parameters*/
+ uint16_t param_index[10]; /*<  Index of this onboard parameter*/
  char param_id_1[16]; /*<  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string*/
  char param_id_2[16]; /*<  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string*/
  char param_id_3[16]; /*<  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string*/
@@ -17,21 +17,21 @@ typedef struct __mavlink_param_value_group_t {
  char param_id_7[16]; /*<  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string*/
  char param_id_8[16]; /*<  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string*/
  char param_id_9[16]; /*<  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string*/
- uint8_t param_type[9]; /*<  Onboard parameter type.*/
+ char param_id_10[16]; /*<  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string*/
+ uint8_t param_type[10]; /*<  Onboard parameter type.*/
  uint8_t param_num; /*<  Number of available parameters*/
 } mavlink_param_value_group_t;
 
-#define MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN 226
-#define MAVLINK_MSG_ID_PARAM_VALUE_GROUP_MIN_LEN 226
-#define MAVLINK_MSG_ID_13004_LEN 226
-#define MAVLINK_MSG_ID_13004_MIN_LEN 226
+#define MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN 233
+#define MAVLINK_MSG_ID_PARAM_VALUE_GROUP_MIN_LEN 233
+#define MAVLINK_MSG_ID_13004_LEN 233
+#define MAVLINK_MSG_ID_13004_MIN_LEN 233
 
-#define MAVLINK_MSG_ID_PARAM_VALUE_GROUP_CRC 238
-#define MAVLINK_MSG_ID_13004_CRC 238
+#define MAVLINK_MSG_ID_PARAM_VALUE_GROUP_CRC 171
+#define MAVLINK_MSG_ID_13004_CRC 171
 
-#define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_VALUE_LEN 9
-#define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_COUNT_LEN 9
-#define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_INDEX_LEN 9
+#define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_VALUE_LEN 10
+#define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_INDEX_LEN 10
 #define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_ID_1_LEN 16
 #define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_ID_2_LEN 16
 #define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_ID_3_LEN 16
@@ -41,47 +41,50 @@ typedef struct __mavlink_param_value_group_t {
 #define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_ID_7_LEN 16
 #define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_ID_8_LEN 16
 #define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_ID_9_LEN 16
-#define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_TYPE_LEN 9
+#define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_ID_10_LEN 16
+#define MAVLINK_MSG_PARAM_VALUE_GROUP_FIELD_PARAM_TYPE_LEN 10
 
 #if MAVLINK_COMMAND_24BIT
 #define MAVLINK_MESSAGE_INFO_PARAM_VALUE_GROUP { \
     13004, \
     "PARAM_VALUE_GROUP", \
-    14, \
-    {  { "param_id_1", NULL, MAVLINK_TYPE_CHAR, 16, 72, offsetof(mavlink_param_value_group_t, param_id_1) }, \
-         { "param_id_2", NULL, MAVLINK_TYPE_CHAR, 16, 88, offsetof(mavlink_param_value_group_t, param_id_2) }, \
-         { "param_id_3", NULL, MAVLINK_TYPE_CHAR, 16, 104, offsetof(mavlink_param_value_group_t, param_id_3) }, \
-         { "param_id_4", NULL, MAVLINK_TYPE_CHAR, 16, 120, offsetof(mavlink_param_value_group_t, param_id_4) }, \
-         { "param_id_5", NULL, MAVLINK_TYPE_CHAR, 16, 136, offsetof(mavlink_param_value_group_t, param_id_5) }, \
-         { "param_id_6", NULL, MAVLINK_TYPE_CHAR, 16, 152, offsetof(mavlink_param_value_group_t, param_id_6) }, \
-         { "param_id_7", NULL, MAVLINK_TYPE_CHAR, 16, 168, offsetof(mavlink_param_value_group_t, param_id_7) }, \
-         { "param_id_8", NULL, MAVLINK_TYPE_CHAR, 16, 184, offsetof(mavlink_param_value_group_t, param_id_8) }, \
-         { "param_id_9", NULL, MAVLINK_TYPE_CHAR, 16, 200, offsetof(mavlink_param_value_group_t, param_id_9) }, \
-         { "param_value", NULL, MAVLINK_TYPE_FLOAT, 9, 0, offsetof(mavlink_param_value_group_t, param_value) }, \
-         { "param_type", NULL, MAVLINK_TYPE_UINT8_T, 9, 216, offsetof(mavlink_param_value_group_t, param_type) }, \
-         { "param_count", NULL, MAVLINK_TYPE_UINT16_T, 9, 36, offsetof(mavlink_param_value_group_t, param_count) }, \
-         { "param_index", NULL, MAVLINK_TYPE_UINT16_T, 9, 54, offsetof(mavlink_param_value_group_t, param_index) }, \
-         { "param_num", NULL, MAVLINK_TYPE_UINT8_T, 0, 225, offsetof(mavlink_param_value_group_t, param_num) }, \
+    15, \
+    {  { "param_id_1", NULL, MAVLINK_TYPE_CHAR, 16, 62, offsetof(mavlink_param_value_group_t, param_id_1) }, \
+         { "param_id_2", NULL, MAVLINK_TYPE_CHAR, 16, 78, offsetof(mavlink_param_value_group_t, param_id_2) }, \
+         { "param_id_3", NULL, MAVLINK_TYPE_CHAR, 16, 94, offsetof(mavlink_param_value_group_t, param_id_3) }, \
+         { "param_id_4", NULL, MAVLINK_TYPE_CHAR, 16, 110, offsetof(mavlink_param_value_group_t, param_id_4) }, \
+         { "param_id_5", NULL, MAVLINK_TYPE_CHAR, 16, 126, offsetof(mavlink_param_value_group_t, param_id_5) }, \
+         { "param_id_6", NULL, MAVLINK_TYPE_CHAR, 16, 142, offsetof(mavlink_param_value_group_t, param_id_6) }, \
+         { "param_id_7", NULL, MAVLINK_TYPE_CHAR, 16, 158, offsetof(mavlink_param_value_group_t, param_id_7) }, \
+         { "param_id_8", NULL, MAVLINK_TYPE_CHAR, 16, 174, offsetof(mavlink_param_value_group_t, param_id_8) }, \
+         { "param_id_9", NULL, MAVLINK_TYPE_CHAR, 16, 190, offsetof(mavlink_param_value_group_t, param_id_9) }, \
+         { "param_id_10", NULL, MAVLINK_TYPE_CHAR, 16, 206, offsetof(mavlink_param_value_group_t, param_id_10) }, \
+         { "param_value", NULL, MAVLINK_TYPE_FLOAT, 10, 0, offsetof(mavlink_param_value_group_t, param_value) }, \
+         { "param_type", NULL, MAVLINK_TYPE_UINT8_T, 10, 222, offsetof(mavlink_param_value_group_t, param_type) }, \
+         { "param_count", NULL, MAVLINK_TYPE_UINT16_T, 0, 40, offsetof(mavlink_param_value_group_t, param_count) }, \
+         { "param_index", NULL, MAVLINK_TYPE_UINT16_T, 10, 42, offsetof(mavlink_param_value_group_t, param_index) }, \
+         { "param_num", NULL, MAVLINK_TYPE_UINT8_T, 0, 232, offsetof(mavlink_param_value_group_t, param_num) }, \
          } \
 }
 #else
 #define MAVLINK_MESSAGE_INFO_PARAM_VALUE_GROUP { \
     "PARAM_VALUE_GROUP", \
-    14, \
-    {  { "param_id_1", NULL, MAVLINK_TYPE_CHAR, 16, 72, offsetof(mavlink_param_value_group_t, param_id_1) }, \
-         { "param_id_2", NULL, MAVLINK_TYPE_CHAR, 16, 88, offsetof(mavlink_param_value_group_t, param_id_2) }, \
-         { "param_id_3", NULL, MAVLINK_TYPE_CHAR, 16, 104, offsetof(mavlink_param_value_group_t, param_id_3) }, \
-         { "param_id_4", NULL, MAVLINK_TYPE_CHAR, 16, 120, offsetof(mavlink_param_value_group_t, param_id_4) }, \
-         { "param_id_5", NULL, MAVLINK_TYPE_CHAR, 16, 136, offsetof(mavlink_param_value_group_t, param_id_5) }, \
-         { "param_id_6", NULL, MAVLINK_TYPE_CHAR, 16, 152, offsetof(mavlink_param_value_group_t, param_id_6) }, \
-         { "param_id_7", NULL, MAVLINK_TYPE_CHAR, 16, 168, offsetof(mavlink_param_value_group_t, param_id_7) }, \
-         { "param_id_8", NULL, MAVLINK_TYPE_CHAR, 16, 184, offsetof(mavlink_param_value_group_t, param_id_8) }, \
-         { "param_id_9", NULL, MAVLINK_TYPE_CHAR, 16, 200, offsetof(mavlink_param_value_group_t, param_id_9) }, \
-         { "param_value", NULL, MAVLINK_TYPE_FLOAT, 9, 0, offsetof(mavlink_param_value_group_t, param_value) }, \
-         { "param_type", NULL, MAVLINK_TYPE_UINT8_T, 9, 216, offsetof(mavlink_param_value_group_t, param_type) }, \
-         { "param_count", NULL, MAVLINK_TYPE_UINT16_T, 9, 36, offsetof(mavlink_param_value_group_t, param_count) }, \
-         { "param_index", NULL, MAVLINK_TYPE_UINT16_T, 9, 54, offsetof(mavlink_param_value_group_t, param_index) }, \
-         { "param_num", NULL, MAVLINK_TYPE_UINT8_T, 0, 225, offsetof(mavlink_param_value_group_t, param_num) }, \
+    15, \
+    {  { "param_id_1", NULL, MAVLINK_TYPE_CHAR, 16, 62, offsetof(mavlink_param_value_group_t, param_id_1) }, \
+         { "param_id_2", NULL, MAVLINK_TYPE_CHAR, 16, 78, offsetof(mavlink_param_value_group_t, param_id_2) }, \
+         { "param_id_3", NULL, MAVLINK_TYPE_CHAR, 16, 94, offsetof(mavlink_param_value_group_t, param_id_3) }, \
+         { "param_id_4", NULL, MAVLINK_TYPE_CHAR, 16, 110, offsetof(mavlink_param_value_group_t, param_id_4) }, \
+         { "param_id_5", NULL, MAVLINK_TYPE_CHAR, 16, 126, offsetof(mavlink_param_value_group_t, param_id_5) }, \
+         { "param_id_6", NULL, MAVLINK_TYPE_CHAR, 16, 142, offsetof(mavlink_param_value_group_t, param_id_6) }, \
+         { "param_id_7", NULL, MAVLINK_TYPE_CHAR, 16, 158, offsetof(mavlink_param_value_group_t, param_id_7) }, \
+         { "param_id_8", NULL, MAVLINK_TYPE_CHAR, 16, 174, offsetof(mavlink_param_value_group_t, param_id_8) }, \
+         { "param_id_9", NULL, MAVLINK_TYPE_CHAR, 16, 190, offsetof(mavlink_param_value_group_t, param_id_9) }, \
+         { "param_id_10", NULL, MAVLINK_TYPE_CHAR, 16, 206, offsetof(mavlink_param_value_group_t, param_id_10) }, \
+         { "param_value", NULL, MAVLINK_TYPE_FLOAT, 10, 0, offsetof(mavlink_param_value_group_t, param_value) }, \
+         { "param_type", NULL, MAVLINK_TYPE_UINT8_T, 10, 222, offsetof(mavlink_param_value_group_t, param_type) }, \
+         { "param_count", NULL, MAVLINK_TYPE_UINT16_T, 0, 40, offsetof(mavlink_param_value_group_t, param_count) }, \
+         { "param_index", NULL, MAVLINK_TYPE_UINT16_T, 10, 42, offsetof(mavlink_param_value_group_t, param_index) }, \
+         { "param_num", NULL, MAVLINK_TYPE_UINT8_T, 0, 232, offsetof(mavlink_param_value_group_t, param_num) }, \
          } \
 }
 #endif
@@ -101,6 +104,7 @@ typedef struct __mavlink_param_value_group_t {
  * @param param_id_7  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_id_8  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_id_9  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+ * @param param_id_10  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_value  Onboard parameter value
  * @param param_type  Onboard parameter type.
  * @param param_count  Total number of onboard parameters
@@ -109,31 +113,32 @@ typedef struct __mavlink_param_value_group_t {
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_param_value_group_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-                               const char *param_id_1, const char *param_id_2, const char *param_id_3, const char *param_id_4, const char *param_id_5, const char *param_id_6, const char *param_id_7, const char *param_id_8, const char *param_id_9, const float *param_value, const uint8_t *param_type, const uint16_t *param_count, const uint16_t *param_index, uint8_t param_num)
+                               const char *param_id_1, const char *param_id_2, const char *param_id_3, const char *param_id_4, const char *param_id_5, const char *param_id_6, const char *param_id_7, const char *param_id_8, const char *param_id_9, const char *param_id_10, const float *param_value, const uint8_t *param_type, uint16_t param_count, const uint16_t *param_index, uint8_t param_num)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN];
-    _mav_put_uint8_t(buf, 225, param_num);
-    _mav_put_float_array(buf, 0, param_value, 9);
-    _mav_put_uint16_t_array(buf, 36, param_count, 9);
-    _mav_put_uint16_t_array(buf, 54, param_index, 9);
-    _mav_put_char_array(buf, 72, param_id_1, 16);
-    _mav_put_char_array(buf, 88, param_id_2, 16);
-    _mav_put_char_array(buf, 104, param_id_3, 16);
-    _mav_put_char_array(buf, 120, param_id_4, 16);
-    _mav_put_char_array(buf, 136, param_id_5, 16);
-    _mav_put_char_array(buf, 152, param_id_6, 16);
-    _mav_put_char_array(buf, 168, param_id_7, 16);
-    _mav_put_char_array(buf, 184, param_id_8, 16);
-    _mav_put_char_array(buf, 200, param_id_9, 16);
-    _mav_put_uint8_t_array(buf, 216, param_type, 9);
+    _mav_put_uint16_t(buf, 40, param_count);
+    _mav_put_uint8_t(buf, 232, param_num);
+    _mav_put_float_array(buf, 0, param_value, 10);
+    _mav_put_uint16_t_array(buf, 42, param_index, 10);
+    _mav_put_char_array(buf, 62, param_id_1, 16);
+    _mav_put_char_array(buf, 78, param_id_2, 16);
+    _mav_put_char_array(buf, 94, param_id_3, 16);
+    _mav_put_char_array(buf, 110, param_id_4, 16);
+    _mav_put_char_array(buf, 126, param_id_5, 16);
+    _mav_put_char_array(buf, 142, param_id_6, 16);
+    _mav_put_char_array(buf, 158, param_id_7, 16);
+    _mav_put_char_array(buf, 174, param_id_8, 16);
+    _mav_put_char_array(buf, 190, param_id_9, 16);
+    _mav_put_char_array(buf, 206, param_id_10, 16);
+    _mav_put_uint8_t_array(buf, 222, param_type, 10);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN);
 #else
     mavlink_param_value_group_t packet;
+    packet.param_count = param_count;
     packet.param_num = param_num;
-    mav_array_memcpy(packet.param_value, param_value, sizeof(float)*9);
-    mav_array_memcpy(packet.param_count, param_count, sizeof(uint16_t)*9);
-    mav_array_memcpy(packet.param_index, param_index, sizeof(uint16_t)*9);
+    mav_array_memcpy(packet.param_value, param_value, sizeof(float)*10);
+    mav_array_memcpy(packet.param_index, param_index, sizeof(uint16_t)*10);
     mav_array_memcpy(packet.param_id_1, param_id_1, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_2, param_id_2, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_3, param_id_3, sizeof(char)*16);
@@ -143,7 +148,8 @@ static inline uint16_t mavlink_msg_param_value_group_pack(uint8_t system_id, uin
     mav_array_memcpy(packet.param_id_7, param_id_7, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_8, param_id_8, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_9, param_id_9, sizeof(char)*16);
-    mav_array_memcpy(packet.param_type, param_type, sizeof(uint8_t)*9);
+    mav_array_memcpy(packet.param_id_10, param_id_10, sizeof(char)*16);
+    mav_array_memcpy(packet.param_type, param_type, sizeof(uint8_t)*10);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN);
 #endif
 
@@ -166,6 +172,7 @@ static inline uint16_t mavlink_msg_param_value_group_pack(uint8_t system_id, uin
  * @param param_id_7  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_id_8  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_id_9  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+ * @param param_id_10  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_value  Onboard parameter value
  * @param param_type  Onboard parameter type.
  * @param param_count  Total number of onboard parameters
@@ -175,31 +182,32 @@ static inline uint16_t mavlink_msg_param_value_group_pack(uint8_t system_id, uin
  */
 static inline uint16_t mavlink_msg_param_value_group_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
                                mavlink_message_t* msg,
-                                   const char *param_id_1,const char *param_id_2,const char *param_id_3,const char *param_id_4,const char *param_id_5,const char *param_id_6,const char *param_id_7,const char *param_id_8,const char *param_id_9,const float *param_value,const uint8_t *param_type,const uint16_t *param_count,const uint16_t *param_index,uint8_t param_num)
+                                   const char *param_id_1,const char *param_id_2,const char *param_id_3,const char *param_id_4,const char *param_id_5,const char *param_id_6,const char *param_id_7,const char *param_id_8,const char *param_id_9,const char *param_id_10,const float *param_value,const uint8_t *param_type,uint16_t param_count,const uint16_t *param_index,uint8_t param_num)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN];
-    _mav_put_uint8_t(buf, 225, param_num);
-    _mav_put_float_array(buf, 0, param_value, 9);
-    _mav_put_uint16_t_array(buf, 36, param_count, 9);
-    _mav_put_uint16_t_array(buf, 54, param_index, 9);
-    _mav_put_char_array(buf, 72, param_id_1, 16);
-    _mav_put_char_array(buf, 88, param_id_2, 16);
-    _mav_put_char_array(buf, 104, param_id_3, 16);
-    _mav_put_char_array(buf, 120, param_id_4, 16);
-    _mav_put_char_array(buf, 136, param_id_5, 16);
-    _mav_put_char_array(buf, 152, param_id_6, 16);
-    _mav_put_char_array(buf, 168, param_id_7, 16);
-    _mav_put_char_array(buf, 184, param_id_8, 16);
-    _mav_put_char_array(buf, 200, param_id_9, 16);
-    _mav_put_uint8_t_array(buf, 216, param_type, 9);
+    _mav_put_uint16_t(buf, 40, param_count);
+    _mav_put_uint8_t(buf, 232, param_num);
+    _mav_put_float_array(buf, 0, param_value, 10);
+    _mav_put_uint16_t_array(buf, 42, param_index, 10);
+    _mav_put_char_array(buf, 62, param_id_1, 16);
+    _mav_put_char_array(buf, 78, param_id_2, 16);
+    _mav_put_char_array(buf, 94, param_id_3, 16);
+    _mav_put_char_array(buf, 110, param_id_4, 16);
+    _mav_put_char_array(buf, 126, param_id_5, 16);
+    _mav_put_char_array(buf, 142, param_id_6, 16);
+    _mav_put_char_array(buf, 158, param_id_7, 16);
+    _mav_put_char_array(buf, 174, param_id_8, 16);
+    _mav_put_char_array(buf, 190, param_id_9, 16);
+    _mav_put_char_array(buf, 206, param_id_10, 16);
+    _mav_put_uint8_t_array(buf, 222, param_type, 10);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN);
 #else
     mavlink_param_value_group_t packet;
+    packet.param_count = param_count;
     packet.param_num = param_num;
-    mav_array_memcpy(packet.param_value, param_value, sizeof(float)*9);
-    mav_array_memcpy(packet.param_count, param_count, sizeof(uint16_t)*9);
-    mav_array_memcpy(packet.param_index, param_index, sizeof(uint16_t)*9);
+    mav_array_memcpy(packet.param_value, param_value, sizeof(float)*10);
+    mav_array_memcpy(packet.param_index, param_index, sizeof(uint16_t)*10);
     mav_array_memcpy(packet.param_id_1, param_id_1, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_2, param_id_2, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_3, param_id_3, sizeof(char)*16);
@@ -209,7 +217,8 @@ static inline uint16_t mavlink_msg_param_value_group_pack_chan(uint8_t system_id
     mav_array_memcpy(packet.param_id_7, param_id_7, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_8, param_id_8, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_9, param_id_9, sizeof(char)*16);
-    mav_array_memcpy(packet.param_type, param_type, sizeof(uint8_t)*9);
+    mav_array_memcpy(packet.param_id_10, param_id_10, sizeof(char)*16);
+    mav_array_memcpy(packet.param_type, param_type, sizeof(uint8_t)*10);
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN);
 #endif
 
@@ -227,7 +236,7 @@ static inline uint16_t mavlink_msg_param_value_group_pack_chan(uint8_t system_id
  */
 static inline uint16_t mavlink_msg_param_value_group_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_param_value_group_t* param_value_group)
 {
-    return mavlink_msg_param_value_group_pack(system_id, component_id, msg, param_value_group->param_id_1, param_value_group->param_id_2, param_value_group->param_id_3, param_value_group->param_id_4, param_value_group->param_id_5, param_value_group->param_id_6, param_value_group->param_id_7, param_value_group->param_id_8, param_value_group->param_id_9, param_value_group->param_value, param_value_group->param_type, param_value_group->param_count, param_value_group->param_index, param_value_group->param_num);
+    return mavlink_msg_param_value_group_pack(system_id, component_id, msg, param_value_group->param_id_1, param_value_group->param_id_2, param_value_group->param_id_3, param_value_group->param_id_4, param_value_group->param_id_5, param_value_group->param_id_6, param_value_group->param_id_7, param_value_group->param_id_8, param_value_group->param_id_9, param_value_group->param_id_10, param_value_group->param_value, param_value_group->param_type, param_value_group->param_count, param_value_group->param_index, param_value_group->param_num);
 }
 
 /**
@@ -241,7 +250,7 @@ static inline uint16_t mavlink_msg_param_value_group_encode(uint8_t system_id, u
  */
 static inline uint16_t mavlink_msg_param_value_group_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_param_value_group_t* param_value_group)
 {
-    return mavlink_msg_param_value_group_pack_chan(system_id, component_id, chan, msg, param_value_group->param_id_1, param_value_group->param_id_2, param_value_group->param_id_3, param_value_group->param_id_4, param_value_group->param_id_5, param_value_group->param_id_6, param_value_group->param_id_7, param_value_group->param_id_8, param_value_group->param_id_9, param_value_group->param_value, param_value_group->param_type, param_value_group->param_count, param_value_group->param_index, param_value_group->param_num);
+    return mavlink_msg_param_value_group_pack_chan(system_id, component_id, chan, msg, param_value_group->param_id_1, param_value_group->param_id_2, param_value_group->param_id_3, param_value_group->param_id_4, param_value_group->param_id_5, param_value_group->param_id_6, param_value_group->param_id_7, param_value_group->param_id_8, param_value_group->param_id_9, param_value_group->param_id_10, param_value_group->param_value, param_value_group->param_type, param_value_group->param_count, param_value_group->param_index, param_value_group->param_num);
 }
 
 /**
@@ -257,6 +266,7 @@ static inline uint16_t mavlink_msg_param_value_group_encode_chan(uint8_t system_
  * @param param_id_7  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_id_8  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_id_9  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+ * @param param_id_10  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
  * @param param_value  Onboard parameter value
  * @param param_type  Onboard parameter type.
  * @param param_count  Total number of onboard parameters
@@ -265,31 +275,32 @@ static inline uint16_t mavlink_msg_param_value_group_encode_chan(uint8_t system_
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_param_value_group_send(mavlink_channel_t chan, const char *param_id_1, const char *param_id_2, const char *param_id_3, const char *param_id_4, const char *param_id_5, const char *param_id_6, const char *param_id_7, const char *param_id_8, const char *param_id_9, const float *param_value, const uint8_t *param_type, const uint16_t *param_count, const uint16_t *param_index, uint8_t param_num)
+static inline void mavlink_msg_param_value_group_send(mavlink_channel_t chan, const char *param_id_1, const char *param_id_2, const char *param_id_3, const char *param_id_4, const char *param_id_5, const char *param_id_6, const char *param_id_7, const char *param_id_8, const char *param_id_9, const char *param_id_10, const float *param_value, const uint8_t *param_type, uint16_t param_count, const uint16_t *param_index, uint8_t param_num)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN];
-    _mav_put_uint8_t(buf, 225, param_num);
-    _mav_put_float_array(buf, 0, param_value, 9);
-    _mav_put_uint16_t_array(buf, 36, param_count, 9);
-    _mav_put_uint16_t_array(buf, 54, param_index, 9);
-    _mav_put_char_array(buf, 72, param_id_1, 16);
-    _mav_put_char_array(buf, 88, param_id_2, 16);
-    _mav_put_char_array(buf, 104, param_id_3, 16);
-    _mav_put_char_array(buf, 120, param_id_4, 16);
-    _mav_put_char_array(buf, 136, param_id_5, 16);
-    _mav_put_char_array(buf, 152, param_id_6, 16);
-    _mav_put_char_array(buf, 168, param_id_7, 16);
-    _mav_put_char_array(buf, 184, param_id_8, 16);
-    _mav_put_char_array(buf, 200, param_id_9, 16);
-    _mav_put_uint8_t_array(buf, 216, param_type, 9);
+    _mav_put_uint16_t(buf, 40, param_count);
+    _mav_put_uint8_t(buf, 232, param_num);
+    _mav_put_float_array(buf, 0, param_value, 10);
+    _mav_put_uint16_t_array(buf, 42, param_index, 10);
+    _mav_put_char_array(buf, 62, param_id_1, 16);
+    _mav_put_char_array(buf, 78, param_id_2, 16);
+    _mav_put_char_array(buf, 94, param_id_3, 16);
+    _mav_put_char_array(buf, 110, param_id_4, 16);
+    _mav_put_char_array(buf, 126, param_id_5, 16);
+    _mav_put_char_array(buf, 142, param_id_6, 16);
+    _mav_put_char_array(buf, 158, param_id_7, 16);
+    _mav_put_char_array(buf, 174, param_id_8, 16);
+    _mav_put_char_array(buf, 190, param_id_9, 16);
+    _mav_put_char_array(buf, 206, param_id_10, 16);
+    _mav_put_uint8_t_array(buf, 222, param_type, 10);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_PARAM_VALUE_GROUP, buf, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_MIN_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_CRC);
 #else
     mavlink_param_value_group_t packet;
+    packet.param_count = param_count;
     packet.param_num = param_num;
-    mav_array_memcpy(packet.param_value, param_value, sizeof(float)*9);
-    mav_array_memcpy(packet.param_count, param_count, sizeof(uint16_t)*9);
-    mav_array_memcpy(packet.param_index, param_index, sizeof(uint16_t)*9);
+    mav_array_memcpy(packet.param_value, param_value, sizeof(float)*10);
+    mav_array_memcpy(packet.param_index, param_index, sizeof(uint16_t)*10);
     mav_array_memcpy(packet.param_id_1, param_id_1, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_2, param_id_2, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_3, param_id_3, sizeof(char)*16);
@@ -299,7 +310,8 @@ static inline void mavlink_msg_param_value_group_send(mavlink_channel_t chan, co
     mav_array_memcpy(packet.param_id_7, param_id_7, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_8, param_id_8, sizeof(char)*16);
     mav_array_memcpy(packet.param_id_9, param_id_9, sizeof(char)*16);
-    mav_array_memcpy(packet.param_type, param_type, sizeof(uint8_t)*9);
+    mav_array_memcpy(packet.param_id_10, param_id_10, sizeof(char)*16);
+    mav_array_memcpy(packet.param_type, param_type, sizeof(uint8_t)*10);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_PARAM_VALUE_GROUP, (const char *)&packet, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_MIN_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_CRC);
 #endif
 }
@@ -312,7 +324,7 @@ static inline void mavlink_msg_param_value_group_send(mavlink_channel_t chan, co
 static inline void mavlink_msg_param_value_group_send_struct(mavlink_channel_t chan, const mavlink_param_value_group_t* param_value_group)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-    mavlink_msg_param_value_group_send(chan, param_value_group->param_id_1, param_value_group->param_id_2, param_value_group->param_id_3, param_value_group->param_id_4, param_value_group->param_id_5, param_value_group->param_id_6, param_value_group->param_id_7, param_value_group->param_id_8, param_value_group->param_id_9, param_value_group->param_value, param_value_group->param_type, param_value_group->param_count, param_value_group->param_index, param_value_group->param_num);
+    mavlink_msg_param_value_group_send(chan, param_value_group->param_id_1, param_value_group->param_id_2, param_value_group->param_id_3, param_value_group->param_id_4, param_value_group->param_id_5, param_value_group->param_id_6, param_value_group->param_id_7, param_value_group->param_id_8, param_value_group->param_id_9, param_value_group->param_id_10, param_value_group->param_value, param_value_group->param_type, param_value_group->param_count, param_value_group->param_index, param_value_group->param_num);
 #else
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_PARAM_VALUE_GROUP, (const char *)param_value_group, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_MIN_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_CRC);
 #endif
@@ -326,31 +338,32 @@ static inline void mavlink_msg_param_value_group_send_struct(mavlink_channel_t c
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_param_value_group_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  const char *param_id_1, const char *param_id_2, const char *param_id_3, const char *param_id_4, const char *param_id_5, const char *param_id_6, const char *param_id_7, const char *param_id_8, const char *param_id_9, const float *param_value, const uint8_t *param_type, const uint16_t *param_count, const uint16_t *param_index, uint8_t param_num)
+static inline void mavlink_msg_param_value_group_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  const char *param_id_1, const char *param_id_2, const char *param_id_3, const char *param_id_4, const char *param_id_5, const char *param_id_6, const char *param_id_7, const char *param_id_8, const char *param_id_9, const char *param_id_10, const float *param_value, const uint8_t *param_type, uint16_t param_count, const uint16_t *param_index, uint8_t param_num)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char *buf = (char *)msgbuf;
-    _mav_put_uint8_t(buf, 225, param_num);
-    _mav_put_float_array(buf, 0, param_value, 9);
-    _mav_put_uint16_t_array(buf, 36, param_count, 9);
-    _mav_put_uint16_t_array(buf, 54, param_index, 9);
-    _mav_put_char_array(buf, 72, param_id_1, 16);
-    _mav_put_char_array(buf, 88, param_id_2, 16);
-    _mav_put_char_array(buf, 104, param_id_3, 16);
-    _mav_put_char_array(buf, 120, param_id_4, 16);
-    _mav_put_char_array(buf, 136, param_id_5, 16);
-    _mav_put_char_array(buf, 152, param_id_6, 16);
-    _mav_put_char_array(buf, 168, param_id_7, 16);
-    _mav_put_char_array(buf, 184, param_id_8, 16);
-    _mav_put_char_array(buf, 200, param_id_9, 16);
-    _mav_put_uint8_t_array(buf, 216, param_type, 9);
+    _mav_put_uint16_t(buf, 40, param_count);
+    _mav_put_uint8_t(buf, 232, param_num);
+    _mav_put_float_array(buf, 0, param_value, 10);
+    _mav_put_uint16_t_array(buf, 42, param_index, 10);
+    _mav_put_char_array(buf, 62, param_id_1, 16);
+    _mav_put_char_array(buf, 78, param_id_2, 16);
+    _mav_put_char_array(buf, 94, param_id_3, 16);
+    _mav_put_char_array(buf, 110, param_id_4, 16);
+    _mav_put_char_array(buf, 126, param_id_5, 16);
+    _mav_put_char_array(buf, 142, param_id_6, 16);
+    _mav_put_char_array(buf, 158, param_id_7, 16);
+    _mav_put_char_array(buf, 174, param_id_8, 16);
+    _mav_put_char_array(buf, 190, param_id_9, 16);
+    _mav_put_char_array(buf, 206, param_id_10, 16);
+    _mav_put_uint8_t_array(buf, 222, param_type, 10);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_PARAM_VALUE_GROUP, buf, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_MIN_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_CRC);
 #else
     mavlink_param_value_group_t *packet = (mavlink_param_value_group_t *)msgbuf;
+    packet->param_count = param_count;
     packet->param_num = param_num;
-    mav_array_memcpy(packet->param_value, param_value, sizeof(float)*9);
-    mav_array_memcpy(packet->param_count, param_count, sizeof(uint16_t)*9);
-    mav_array_memcpy(packet->param_index, param_index, sizeof(uint16_t)*9);
+    mav_array_memcpy(packet->param_value, param_value, sizeof(float)*10);
+    mav_array_memcpy(packet->param_index, param_index, sizeof(uint16_t)*10);
     mav_array_memcpy(packet->param_id_1, param_id_1, sizeof(char)*16);
     mav_array_memcpy(packet->param_id_2, param_id_2, sizeof(char)*16);
     mav_array_memcpy(packet->param_id_3, param_id_3, sizeof(char)*16);
@@ -360,7 +373,8 @@ static inline void mavlink_msg_param_value_group_send_buf(mavlink_message_t *msg
     mav_array_memcpy(packet->param_id_7, param_id_7, sizeof(char)*16);
     mav_array_memcpy(packet->param_id_8, param_id_8, sizeof(char)*16);
     mav_array_memcpy(packet->param_id_9, param_id_9, sizeof(char)*16);
-    mav_array_memcpy(packet->param_type, param_type, sizeof(uint8_t)*9);
+    mav_array_memcpy(packet->param_id_10, param_id_10, sizeof(char)*16);
+    mav_array_memcpy(packet->param_type, param_type, sizeof(uint8_t)*10);
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_PARAM_VALUE_GROUP, (const char *)packet, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_MIN_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_LEN, MAVLINK_MSG_ID_PARAM_VALUE_GROUP_CRC);
 #endif
 }
@@ -378,7 +392,7 @@ static inline void mavlink_msg_param_value_group_send_buf(mavlink_message_t *msg
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_1(const mavlink_message_t* msg, char *param_id_1)
 {
-    return _MAV_RETURN_char_array(msg, param_id_1, 16,  72);
+    return _MAV_RETURN_char_array(msg, param_id_1, 16,  62);
 }
 
 /**
@@ -388,7 +402,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_1(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_2(const mavlink_message_t* msg, char *param_id_2)
 {
-    return _MAV_RETURN_char_array(msg, param_id_2, 16,  88);
+    return _MAV_RETURN_char_array(msg, param_id_2, 16,  78);
 }
 
 /**
@@ -398,7 +412,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_2(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_3(const mavlink_message_t* msg, char *param_id_3)
 {
-    return _MAV_RETURN_char_array(msg, param_id_3, 16,  104);
+    return _MAV_RETURN_char_array(msg, param_id_3, 16,  94);
 }
 
 /**
@@ -408,7 +422,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_3(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_4(const mavlink_message_t* msg, char *param_id_4)
 {
-    return _MAV_RETURN_char_array(msg, param_id_4, 16,  120);
+    return _MAV_RETURN_char_array(msg, param_id_4, 16,  110);
 }
 
 /**
@@ -418,7 +432,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_4(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_5(const mavlink_message_t* msg, char *param_id_5)
 {
-    return _MAV_RETURN_char_array(msg, param_id_5, 16,  136);
+    return _MAV_RETURN_char_array(msg, param_id_5, 16,  126);
 }
 
 /**
@@ -428,7 +442,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_5(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_6(const mavlink_message_t* msg, char *param_id_6)
 {
-    return _MAV_RETURN_char_array(msg, param_id_6, 16,  152);
+    return _MAV_RETURN_char_array(msg, param_id_6, 16,  142);
 }
 
 /**
@@ -438,7 +452,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_6(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_7(const mavlink_message_t* msg, char *param_id_7)
 {
-    return _MAV_RETURN_char_array(msg, param_id_7, 16,  168);
+    return _MAV_RETURN_char_array(msg, param_id_7, 16,  158);
 }
 
 /**
@@ -448,7 +462,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_7(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_8(const mavlink_message_t* msg, char *param_id_8)
 {
-    return _MAV_RETURN_char_array(msg, param_id_8, 16,  184);
+    return _MAV_RETURN_char_array(msg, param_id_8, 16,  174);
 }
 
 /**
@@ -458,7 +472,17 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_8(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_id_9(const mavlink_message_t* msg, char *param_id_9)
 {
-    return _MAV_RETURN_char_array(msg, param_id_9, 16,  200);
+    return _MAV_RETURN_char_array(msg, param_id_9, 16,  190);
+}
+
+/**
+ * @brief Get field param_id_10 from param_value_group message
+ *
+ * @return  Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
+ */
+static inline uint16_t mavlink_msg_param_value_group_get_param_id_10(const mavlink_message_t* msg, char *param_id_10)
+{
+    return _MAV_RETURN_char_array(msg, param_id_10, 16,  206);
 }
 
 /**
@@ -468,7 +492,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_id_9(const mavlin
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_value(const mavlink_message_t* msg, float *param_value)
 {
-    return _MAV_RETURN_float_array(msg, param_value, 9,  0);
+    return _MAV_RETURN_float_array(msg, param_value, 10,  0);
 }
 
 /**
@@ -478,7 +502,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_value(const mavli
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_type(const mavlink_message_t* msg, uint8_t *param_type)
 {
-    return _MAV_RETURN_uint8_t_array(msg, param_type, 9,  216);
+    return _MAV_RETURN_uint8_t_array(msg, param_type, 10,  222);
 }
 
 /**
@@ -486,9 +510,9 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_type(const mavlin
  *
  * @return  Total number of onboard parameters
  */
-static inline uint16_t mavlink_msg_param_value_group_get_param_count(const mavlink_message_t* msg, uint16_t *param_count)
+static inline uint16_t mavlink_msg_param_value_group_get_param_count(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint16_t_array(msg, param_count, 9,  36);
+    return _MAV_RETURN_uint16_t(msg,  40);
 }
 
 /**
@@ -498,7 +522,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_count(const mavli
  */
 static inline uint16_t mavlink_msg_param_value_group_get_param_index(const mavlink_message_t* msg, uint16_t *param_index)
 {
-    return _MAV_RETURN_uint16_t_array(msg, param_index, 9,  54);
+    return _MAV_RETURN_uint16_t_array(msg, param_index, 10,  42);
 }
 
 /**
@@ -508,7 +532,7 @@ static inline uint16_t mavlink_msg_param_value_group_get_param_index(const mavli
  */
 static inline uint8_t mavlink_msg_param_value_group_get_param_num(const mavlink_message_t* msg)
 {
-    return _MAV_RETURN_uint8_t(msg,  225);
+    return _MAV_RETURN_uint8_t(msg,  232);
 }
 
 /**
@@ -521,7 +545,7 @@ static inline void mavlink_msg_param_value_group_decode(const mavlink_message_t*
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     mavlink_msg_param_value_group_get_param_value(msg, param_value_group->param_value);
-    mavlink_msg_param_value_group_get_param_count(msg, param_value_group->param_count);
+    param_value_group->param_count = mavlink_msg_param_value_group_get_param_count(msg);
     mavlink_msg_param_value_group_get_param_index(msg, param_value_group->param_index);
     mavlink_msg_param_value_group_get_param_id_1(msg, param_value_group->param_id_1);
     mavlink_msg_param_value_group_get_param_id_2(msg, param_value_group->param_id_2);
@@ -532,6 +556,7 @@ static inline void mavlink_msg_param_value_group_decode(const mavlink_message_t*
     mavlink_msg_param_value_group_get_param_id_7(msg, param_value_group->param_id_7);
     mavlink_msg_param_value_group_get_param_id_8(msg, param_value_group->param_id_8);
     mavlink_msg_param_value_group_get_param_id_9(msg, param_value_group->param_id_9);
+    mavlink_msg_param_value_group_get_param_id_10(msg, param_value_group->param_id_10);
     mavlink_msg_param_value_group_get_param_type(msg, param_value_group->param_type);
     param_value_group->param_num = mavlink_msg_param_value_group_get_param_num(msg);
 #else

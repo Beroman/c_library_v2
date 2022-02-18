@@ -307,15 +307,15 @@ static void mavlink_test_param_value_group(uint8_t system_id, uint8_t component_
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_param_value_group_t packet_in = {
-        { 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0 },{ 19107, 19108, 19109, 19110, 19111, 19112, 19113, 19114, 19115 },{ 20043, 20044, 20045, 20046, 20047, 20048, 20049, 20050, 20051 },"UVWXYZABCDEFGHI","KLMNOPQRSTUVWXY","ABCDEFGHIJKLMNO","QRSTUVWXYZABCDE","GHIJKLMNOPQRSTU","WXYZABCDEFGHIJK","MNOPQRSTUVWXYZA","CDEFGHIJKLMNOPQ","STUVWXYZABCDEFG",{ 141, 142, 143, 144, 145, 146, 147, 148, 149 },232
+        { 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0 },19315,{ 19419, 19420, 19421, 19422, 19423, 19424, 19425, 19426, 19427, 19428 },"KLMNOPQRSTUVWXY","ABCDEFGHIJKLMNO","QRSTUVWXYZABCDE","GHIJKLMNOPQRSTU","WXYZABCDEFGHIJK","MNOPQRSTUVWXYZA","CDEFGHIJKLMNOPQ","STUVWXYZABCDEFG","IJKLMNOPQRSTUVW","YZABCDEFGHIJKLM",{ 31, 32, 33, 34, 35, 36, 37, 38, 39, 40 },189
     };
     mavlink_param_value_group_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
+        packet1.param_count = packet_in.param_count;
         packet1.param_num = packet_in.param_num;
         
-        mav_array_memcpy(packet1.param_value, packet_in.param_value, sizeof(float)*9);
-        mav_array_memcpy(packet1.param_count, packet_in.param_count, sizeof(uint16_t)*9);
-        mav_array_memcpy(packet1.param_index, packet_in.param_index, sizeof(uint16_t)*9);
+        mav_array_memcpy(packet1.param_value, packet_in.param_value, sizeof(float)*10);
+        mav_array_memcpy(packet1.param_index, packet_in.param_index, sizeof(uint16_t)*10);
         mav_array_memcpy(packet1.param_id_1, packet_in.param_id_1, sizeof(char)*16);
         mav_array_memcpy(packet1.param_id_2, packet_in.param_id_2, sizeof(char)*16);
         mav_array_memcpy(packet1.param_id_3, packet_in.param_id_3, sizeof(char)*16);
@@ -325,7 +325,8 @@ static void mavlink_test_param_value_group(uint8_t system_id, uint8_t component_
         mav_array_memcpy(packet1.param_id_7, packet_in.param_id_7, sizeof(char)*16);
         mav_array_memcpy(packet1.param_id_8, packet_in.param_id_8, sizeof(char)*16);
         mav_array_memcpy(packet1.param_id_9, packet_in.param_id_9, sizeof(char)*16);
-        mav_array_memcpy(packet1.param_type, packet_in.param_type, sizeof(uint8_t)*9);
+        mav_array_memcpy(packet1.param_id_10, packet_in.param_id_10, sizeof(char)*16);
+        mav_array_memcpy(packet1.param_type, packet_in.param_type, sizeof(uint8_t)*10);
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
         if (status->flags & MAVLINK_STATUS_FLAG_OUT_MAVLINK1) {
@@ -339,12 +340,12 @@ static void mavlink_test_param_value_group(uint8_t system_id, uint8_t component_
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_param_value_group_pack(system_id, component_id, &msg , packet1.param_id_1 , packet1.param_id_2 , packet1.param_id_3 , packet1.param_id_4 , packet1.param_id_5 , packet1.param_id_6 , packet1.param_id_7 , packet1.param_id_8 , packet1.param_id_9 , packet1.param_value , packet1.param_type , packet1.param_count , packet1.param_index , packet1.param_num );
+    mavlink_msg_param_value_group_pack(system_id, component_id, &msg , packet1.param_id_1 , packet1.param_id_2 , packet1.param_id_3 , packet1.param_id_4 , packet1.param_id_5 , packet1.param_id_6 , packet1.param_id_7 , packet1.param_id_8 , packet1.param_id_9 , packet1.param_id_10 , packet1.param_value , packet1.param_type , packet1.param_count , packet1.param_index , packet1.param_num );
     mavlink_msg_param_value_group_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_param_value_group_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.param_id_1 , packet1.param_id_2 , packet1.param_id_3 , packet1.param_id_4 , packet1.param_id_5 , packet1.param_id_6 , packet1.param_id_7 , packet1.param_id_8 , packet1.param_id_9 , packet1.param_value , packet1.param_type , packet1.param_count , packet1.param_index , packet1.param_num );
+    mavlink_msg_param_value_group_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.param_id_1 , packet1.param_id_2 , packet1.param_id_3 , packet1.param_id_4 , packet1.param_id_5 , packet1.param_id_6 , packet1.param_id_7 , packet1.param_id_8 , packet1.param_id_9 , packet1.param_id_10 , packet1.param_value , packet1.param_type , packet1.param_count , packet1.param_index , packet1.param_num );
     mavlink_msg_param_value_group_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -357,7 +358,7 @@ static void mavlink_test_param_value_group(uint8_t system_id, uint8_t component_
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_param_value_group_send(MAVLINK_COMM_1 , packet1.param_id_1 , packet1.param_id_2 , packet1.param_id_3 , packet1.param_id_4 , packet1.param_id_5 , packet1.param_id_6 , packet1.param_id_7 , packet1.param_id_8 , packet1.param_id_9 , packet1.param_value , packet1.param_type , packet1.param_count , packet1.param_index , packet1.param_num );
+    mavlink_msg_param_value_group_send(MAVLINK_COMM_1 , packet1.param_id_1 , packet1.param_id_2 , packet1.param_id_3 , packet1.param_id_4 , packet1.param_id_5 , packet1.param_id_6 , packet1.param_id_7 , packet1.param_id_8 , packet1.param_id_9 , packet1.param_id_10 , packet1.param_value , packet1.param_type , packet1.param_count , packet1.param_index , packet1.param_num );
     mavlink_msg_param_value_group_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
